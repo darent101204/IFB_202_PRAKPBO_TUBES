@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title>RT Dashboard</title>
+</head>
+<body>
+    <div layout:fragment="page-title">Dashboard Pengurus RT</div>
+
+    <div layout:fragment="content">
+        <!-- Stats -->
+        <div class="row">
+            <div class="col-md-4">
+                <div class="stat-card bg-warning">
+                    <h3 th:text="${pendingApprovalCount}">0</h3>
+                    <p>Perlu Approval</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card bg-info">
+                    <h3 th:text="${scheduledCount}">0</h3>
+                    <p>Dalam Jadwal</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card bg-success">
+                    <h3 th:text="${completedCount}">0</h3>
+                    <p>Total Selesai</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending Approval Table -->
+        <div class="card mt-4">
+            <div class="card-header bg-warning text-dark">
+                <i class="bi bi-clock-history"></i> Menunggu Persetujuan
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead>
+                            <tr>
+                                <th>Warga</th>
+                                <th>Tanggal Request</th>
+                                <th>Item</th>
+                                <th>Catatan</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="req : ${rtRequests}" th:if="${rtRequests != null and req.status == T(com.example.project.model.RequestStatus).PENDING_APPROVAL}">
+                                <td th:text="${req.resident?.name ?: '-'}">Resident</td>
+                                <td th:text="${#temporals.format(req.createdAt, 'dd/MM/yyyy HH:mm')}">Date</td>
+                                <td>
+                                    <ul class="list-unstyled mb-0">
+                                        <li th:each="item : ${req.items}" th:if="${req.items != null}">
+                                            <small th:text="${item.category != null ? item.category.name + ': ' + item.quantity + ' ' + item.category.unit : '-'}"></small>
+                                        </li>
+                                    </ul>
+                                </td>
+                                <td th:text="${req.notes}">Notes</td>
+                                <td>
+                                    <div class="d-flex gap-2">
+                                        <form th:action="@{/requests/{id}/approve(id=${req.id})}" method="post">
+                                            <button type="submit" class="btn btn-sm btn-success">Approve</button>
+                                        </form>
+                                        <form th:action="@{/requests/{id}/reject(id=${req.id})}" method="post">
+                                            <button type="submit" class="btn btn-sm btn-danger">Reject</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- All RT Requests -->
+        <div class="card mt-4">
+            <div class="card-header">Semua Request di RT Saya</div>
+            <div class="card-body">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Warga</th>
+                            <th>Status</th>
+                            <th>Collector</th>
+                        </tr>
+                    </thead>
+                        <tbody>
+                            <tr th:each="req : ${rtRequests}" th:if="${rtRequests != null}">
+                                <td th:text="${req.id}"></td>
+                                <td th:text="${req.resident?.name ?: '-'}"></td>
+                                <td>
+                                    <span class="badge" th:classappend="${req.status != null} ? 'badge-' + ${#strings.toLowerCase(req.status).replace('_', '-')} : ''"
+                                          th:text="${req.status}"></span>
+                                </td>
+                                <td th:text="${req.assignedCollector != null ? req.assignedCollector.name : '-'}"></td>
+                            </tr>
+                            <tr th:if="${rtRequests == null or #lists.isEmpty(rtRequests)}">
+                                <td colspan="4" class="text-center text-muted">Belum ada request.</td>
+                            </tr>
+                        </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

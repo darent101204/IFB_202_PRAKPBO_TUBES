@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title>Kelola RT</title>
+</head>
+<body>
+    <div layout:fragment="page-title">Manajemen RT</div>
+
+    <div layout:fragment="content">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between">
+                <span>Daftar Rukun Tetangga</span>
+                <a th:href="@{/admin/rts/create}" class="btn btn-sm btn-primary">Tambah RT</a>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Nama RT</th>
+                            <th>Wilayah (Region)</th>
+                            <th>Kontak</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="rt : ${rts}">
+                            <td th:text="${rt.id}"></td>
+                            <td th:text="${rt.name}"></td>
+                            <td th:text="${rt.region.name}"></td>
+                            <td th:text="${rt.contactPhone}"></td>
+                            <td>
+                                <a th:href="@{/admin/rts/{id}/edit(id=${rt.id})}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title>Buat Request Penjemputan</title>
+</head>
+<body>
+    <div layout:fragment="page-title">Buat Request Penjemputan Baru</div>
+
+    <div layout:fragment="content">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <form th:action="@{/requests/create}" th:object="${requestDTO}" method="post">
+                            <div class="mb-3">
+                                <label class="form-label">RT Tujuan</label>
+                                <select class="form-select" th:field="*{rtId}" required>
+                                    <option value="" disabled selected>Pilih RT...</option>
+                                    <!-- Simplified: showing user's RT if exists -->
+                                    <option th:if="${session.loggedInUser.rt != null}" 
+                                            th:value="${session.loggedInUser.rt.id}" 
+                                            th:text="${session.loggedInUser.rt.name}" selected></option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Catatan / Keterangan Limbah</label>
+                                <textarea class="form-control" th:field="*{notes}" rows="4" 
+                                          placeholder="Contoh: Plastik 2 kantong, Botol kaca 5 buah..."></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Rencana Tanggal Penjemputan (Opsional)</label>
+                                <input type="date" class="form-control" th:field="*{scheduledDate}">
+                            </div>
+
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle"></i> Request Anda akan dikirim ke RT untuk disetujui terlebih dahulu.
+                            </div>
+
+                            <div class="d-flex justify-content-between">
+                                <a th:href="@{/dashboard}" class="btn btn-secondary">Batal</a>
+                                <button type="submit" class="btn btn-primary">Kirim Request</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

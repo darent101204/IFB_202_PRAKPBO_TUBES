@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title>Kategori Limbah</title>
+</head>
+<body>
+    <div layout:fragment="page-title">Manajemen Kategori Limbah</div>
+
+    <div layout:fragment="content">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between">
+                <span>Daftar Kategori</span>
+                <a th:href="@{/admin/waste-categories/create}" class="btn btn-sm btn-primary">Tambah Kategori</a>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Nama Kategori</th>
+                            <th>Satuan</th>
+                            <th>Deskripsi</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="cat : ${categories}">
+                            <td th:text="${cat.id}"></td>
+                            <td th:text="${cat.name}"></td>
+                            <td th:text="${cat.unit}"></td>
+                            <td th:text="${cat.description}"></td>
+                            <td>
+                                <a th:href="@{/admin/waste-categories/{id}/edit(id=${cat.id})}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

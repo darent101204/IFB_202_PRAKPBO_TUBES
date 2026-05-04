@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title>Collector Dashboard</title>
+</head>
+<body>
+    <div layout:fragment="page-title">Dashboard Collector</div>
+
+    <div layout:fragment="content">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="stat-card bg-info">
+                    <h3 th:text="${scheduledCount}">0</h3>
+                    <p>Tugas Dijadwalkan</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card bg-warning">
+                    <h3 th:text="${onProgressCount}">0</h3>
+                    <p>Sedang Dikerjakan</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card bg-success">
+                    <h3 th:text="${completedCount}">0</h3>
+                    <p>Tugas Selesai</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header bg-primary text-white">
+                <i class="bi bi-list-task"></i> Daftar Tugas Saya
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0 align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>ID</th>
+                                <th>Warga / Lokasi</th>
+                                <th>RT</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="task : ${myTasks}" th:if="${myTasks != null}">
+                                <td th:text="'#' + ${task.id}"></td>
+                                <td>
+                                    <div class="fw-bold" th:text="${task.resident?.name ?: '-'}">Resident</div>
+                                    <small class="text-muted" th:text="${task.region?.name ?: '-'}"></small>
+                                </td>
+                                <td th:text="${task.rt?.name ?: '-'}"></td>
+                                <td>
+                                    <span class="badge" th:classappend="${task.status != null} ? 'badge-' + ${#strings.toLowerCase(task.status).replace('_', '-')} : ''"
+                                          th:text="${task.status}"></span>
+                                </td>
+                                <td>
+                                    <form th:if="${task.status == T(com.example.project.model.RequestStatus).SCHEDULED}"
+                                          th:action="@{/requests/{id}/start(id=${task.id})}" method="post">
+                                        <button type="submit" class="btn btn-sm btn-warning text-white">Mulai</button>
+                                    </form>
+                                    <form th:if="${task.status == T(com.example.project.model.RequestStatus).ON_PROGRESS}"
+                                          th:action="@{/requests/{id}/complete(id=${task.id})}" method="post">
+                                        <button type="submit" class="btn btn-sm btn-success">Selesai</button>
+                                    </form>
+                                    <span th:if="${task.status == T(com.example.project.model.RequestStatus).COMPLETED}" class="text-success">
+                                        <i class="bi bi-check-circle-fill"></i> Selesai
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr th:if="${myTasks == null or #lists.isEmpty(myTasks)}">
+                                <td colspan="5" class="text-center text-muted p-4">Belum ada tugas yang di-assign.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

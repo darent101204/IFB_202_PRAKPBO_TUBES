@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title>Admin Dashboard</title>
+</head>
+<body>
+    <div layout:fragment="page-title">Monitoring Sistem (Admin)</div>
+
+    <div layout:fragment="content">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card stat-card bg-primary">
+                    <h3 th:text="${totalRequests}">0</h3>
+                    <p>Total Request</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stat-card bg-warning">
+                    <h3 th:text="${pending_approvalCount}">0</h3>
+                    <p>Pending Approval</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stat-card bg-info">
+                    <h3 th:text="${scheduledCount}">0</h3>
+                    <p>Scheduled</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stat-card bg-success">
+                    <h3 th:text="${completedCount}">0</h3>
+                    <p>Completed</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header">Semua Aktivitas Request</div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Warga</th>
+                                <th>Wilayah</th>
+                                <th>RT</th>
+                                <th>Status</th>
+                                <th>Collector</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="req : ${allRequests}" th:if="${allRequests != null}">
+                                <td th:text="${req.id}"></td>
+                                <td th:text="${req.resident?.name ?: '-'}"></td>
+                                <td th:text="${req.region?.name ?: '-'}"></td>
+                                <td th:text="${req.rt?.name ?: '-'}"></td>
+                                <td>
+                                    <span class="badge" th:classappend="${req.status != null} ? 'badge-' + ${#strings.toLowerCase(req.status).replace('_', '-')} : ''"
+                                          th:text="${req.status}"></span>
+                                </td>
+                                <td th:text="${req.assignedCollector?.name ?: '-'}"></td>
+                            </tr>
+                            <tr th:if="${allRequests == null or #lists.isEmpty(allRequests)}">
+                                <td colspan="6" class="text-center text-muted">Tidak ada data request.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

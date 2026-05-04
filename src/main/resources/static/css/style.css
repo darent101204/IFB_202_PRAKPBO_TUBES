@@ -1,0 +1,126 @@
+:root {
+    --primary-color: #2e7d32;
+    --primary-light: #60ad5e;
+    --primary-dark: #005005;
+    --secondary-color: #f5f5f5;
+    --text-color: #333;
+    --sidebar-width: 250px;
+    --navbar-height: 60px;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    color: var(--text-color);
+}
+
+/* Layout */
+#wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+
+#sidebar {
+    width: var(--sidebar-width);
+    background-color: var(--primary-dark);
+    color: white;
+    transition: all 0.3s;
+    position: fixed;
+    height: 100vh;
+    z-index: 1000;
+}
+
+#sidebar .sidebar-header {
+    padding: 20px;
+    background: rgba(0,0,0,0.1);
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-align: center;
+}
+
+#sidebar ul.components {
+    padding: 20px 0;
+}
+
+#sidebar ul li a {
+    padding: 10px 20px;
+    font-size: 1.1rem;
+    display: block;
+    color: rgba(255,255,255,0.8);
+    text-decoration: none;
+}
+
+#sidebar ul li a:hover {
+    color: white;
+    background: rgba(255,255,255,0.1);
+}
+
+#sidebar ul li.active > a {
+    color: white;
+    background: var(--primary-color);
+}
+
+#content {
+    width: 100%;
+    margin-left: var(--sidebar-width);
+    padding-top: var(--navbar-height);
+}
+
+.navbar {
+    height: var(--navbar-height);
+    background-color: white !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: var(--sidebar-width);
+    z-index: 999;
+    padding: 0 20px;
+}
+
+/* Components */
+.card {
+    border: none;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    margin-bottom: 20px;
+}
+
+.card-header {
+    background-color: white;
+    border-bottom: 1px solid #eee;
+    font-weight: bold;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+    border-color: var(--primary-dark);
+}
+
+/* Badges */
+.badge-pending-approval { background-color: #ffc107; color: #000; }
+.badge-pending { background-color: #6c757d; }
+.badge-scheduled { background-color: #0d6efd; }
+.badge-on-progress { background-color: #fd7e14; }
+.badge-completed { background-color: #198754; }
+.badge-rejected { background-color: #dc3545; }
+
+/* Dashboard Cards */
+.stat-card {
+    border-radius: 10px;
+    padding: 20px;
+    color: white;
+    margin-bottom: 20px;
+}
+
+.stat-card.bg-primary { background: linear-gradient(45deg, #2e7d32, #60ad5e); }
+.stat-card.bg-info { background: linear-gradient(45deg, #0288d1, #03a9f4); }
+.stat-card.bg-warning { background: linear-gradient(45deg, #f57c00, #ff9800); }
+.stat-card.bg-success { background: linear-gradient(45deg, #388e3c, #4caf50); }
+
+.stat-card h3 { font-size: 2.5rem; margin: 0; }
+.stat-card p { margin: 0; opacity: 0.8; }

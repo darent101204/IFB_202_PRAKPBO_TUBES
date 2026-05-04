@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title>Tambah User</title>
+</head>
+<body>
+    <div layout:fragment="page-title">Tambah User Baru</div>
+
+    <div layout:fragment="content">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <form th:action="@{/users/create}" th:object="${userDTO}" method="post">
+                            <div class="mb-3">
+                                <label class="form-label">Nama Lengkap</label>
+                                <input type="text" class="form-control" th:field="*{name}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" th:field="*{email}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Password</label>
+                                <input type="password" class="form-control" th:field="*{password}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Role</label>
+                                <select class="form-select" th:field="*{role}" required>
+                                    <option value="" disabled selected>Pilih Role...</option>
+                                    <option th:each="r : ${roles}" th:value="${r}" th:text="${r}"></option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Region (Opsional)</label>
+                                <select class="form-select" th:field="*{regionId}">
+                                    <option value="">Pilih Region...</option>
+                                    <option th:each="reg : ${regions}" th:value="${reg.id}" th:text="${reg.name}"></option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">RT (Opsional)</label>
+                                <select class="form-select" th:field="*{rtId}">
+                                    <option value="">Pilih RT...</option>
+                                    <option th:each="rt : ${rts}" th:value="${rt.id}" th:text="${rt.name}"></option>
+                                </select>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <a th:href="@{/users}" class="btn btn-secondary">Batal</a>
+                                <button type="submit" class="btn btn-primary">Simpan User</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

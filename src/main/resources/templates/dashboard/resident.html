@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title>Resident Dashboard</title>
+</head>
+<body>
+    <div layout:fragment="page-title">Dashboard Warga</div>
+
+    <div layout:fragment="content">
+        <!-- Stats Cards -->
+        <div class="row">
+            <div class="col-md-3">
+                <div class="stat-card bg-primary">
+                    <h3 th:text="${totalRequests}">0</h3>
+                    <p>Total Request</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card bg-warning">
+                    <h3 th:text="${pendingCount}">0</h3>
+                    <p>Menunggu Approval</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card bg-info">
+                    <h3 th:text="${scheduledCount}">0</h3>
+                    <p>Dijadwalkan</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card bg-success">
+                    <h3 th:text="${completedCount}">0</h3>
+                    <p>Selesai</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Request History -->
+        <div class="card mt-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>Riwayat Penjemputan</span>
+                <a th:href="@{/requests/create}" class="btn btn-sm btn-primary">
+                    <i class="bi bi-plus"></i> Request Baru
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Tanggal</th>
+                                <th>RT</th>
+                                <th>Status</th>
+                                <th>Collector</th>
+                                <th>Catatan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="req : ${myRequests}" th:if="${myRequests != null}">
+                                <td th:text="'#' + ${req.id}">#1</td>
+                                <td th:text="${#temporals.format(req.createdAt, 'dd MMM yyyy HH:mm')}">Date</td>
+                                <td th:text="${req.rt?.name ?: '-'}">RT</td>
+                                <td>
+                                    <span class="badge" th:classappend="${req.status != null} ? 'badge-' + ${#strings.toLowerCase(req.status).replace('_', '-')} : ''"
+                                          th:text="${req.status}">STATUS</span>
+                                </td>
+                                <td th:text="${req.assignedCollector?.name ?: '-'}">Collector</td>
+                                <td th:text="${req.notes}">Notes</td>
+                            </tr>
+                            <tr th:if="${myRequests == null or #lists.isEmpty(myRequests)}">
+                                <td colspan="6" class="text-center text-muted">Belum ada riwayat request.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

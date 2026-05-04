@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Smart Waste System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #2e7d32 0%, #60ad5e 100%);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-card {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 400px;
+        }
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .login-header i {
+            font-size: 3rem;
+            color: #2e7d32;
+        }
+        .btn-success {
+            background-color: #2e7d32;
+            border: none;
+            padding: 12px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <div class="login-header">
+            <i class="bi bi-recycle"></i>
+            <h2 class="mt-2">Smart Waste</h2>
+            <p class="text-muted">Scheduling System</p>
+        </div>
+
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+        <div th:if="${param.logout}" class="alert alert-info">Anda telah logout.</div>
+
+        <form th:action="@{/login}" th:object="${loginDTO}" method="post">
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                    <input type="email" class="form-control" th:field="*{email}" placeholder="admin@mail.com" required>
+                </div>
+            </div>
+            <div class="mb-4">
+                <label class="form-label">Password</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                    <input type="password" class="form-control" th:field="*{password}" placeholder="admin123" required>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-success w-100 mb-3">LOGIN</button>
+            
+            <div class="text-center text-muted">
+                <small>Gunakan akun demo di DataInitializer</small>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
