@@ -30,22 +30,7 @@
                             <td th:text="${r.name}"></td>
                             <td th:text="${r.description}"></td>
                             <td>
-                                <a th:href="@{/admin/regions/{id}/edit(id=${r.id})}" 
-                                   class="btn btn-sm btn-outline-primary">
-                                    <i class="bi bi-pencil"></i>
-                                </a>
-                            
-                                <form th:action="@{/admin/regions/{id}/delete(id=${r.id})}"
-                                      method="post"
-                                      style="display:inline"
-                                      onsubmit="return confirm('Hapus region ini?')">
-                            
-                                    <button type="submit"
-                                            class="btn btn-sm btn-outline-danger">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                            
-                                </form>
+                                <a th:href="@{/admin/regions/{id}/edit(id=${r.id})}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
                             </td>
                         </tr>
                     </tbody>
