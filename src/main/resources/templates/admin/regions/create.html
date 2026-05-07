@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title>Tambah Region</title>
+</head>
+
+<body>
+
+<div layout:fragment="page-title">
+    Tambah Region
+</div>
+
+<div layout:fragment="content">
+
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+
+            <div class="card">
+                <div class="card-body">
+
+                    <form th:action="@{/admin/regions/create}"
+                          th:object="${regionDTO}"
+                          method="post">
+
+                        <!-- NAME -->
+                        <div class="mb-3">
+                            <label class="form-label">Nama Region</label>
+                            <input type="text"
+                                   class="form-control"
+                                   th:field="*{name}"
+                                   placeholder="Masukkan nama region"
+                                   required>
+                        </div>
+
+                        <!-- DESCRIPTION -->
+                        <div class="mb-3">
+                            <label class="form-label">Deskripsi</label>
+                            <textarea class="form-control"
+                                      th:field="*{description}"
+                                      rows="4"
+                                      placeholder="Deskripsi region (opsional)">
+                            </textarea>
+                        </div>
+
+                        <!-- BUTTON -->
+                        <div class="d-flex justify-content-between">
+
+                            <a th:href="@{/admin/regions}"
+                               class="btn btn-secondary">
+                                Batal
+                            </a>
+
+                            <button type="submit"
+                                    class="btn btn-primary">
+                                Simpan
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>
