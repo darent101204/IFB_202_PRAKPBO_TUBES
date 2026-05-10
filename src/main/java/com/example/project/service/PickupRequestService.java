@@ -21,5 +21,6 @@ public interface PickupRequestService {
     PickupRequest autoAssignCollector(Long requestId);
     PickupRequest updateStatus(Long id, RequestStatus newStatus, User user);
     PickupRequest makeCollective(Long masterId, List<Long> childIds, User rtUser);
+    PickupRequest updateRequest(Long id, PickupRequestDTO dto, User user);
     void deleteById(Long id);
 }

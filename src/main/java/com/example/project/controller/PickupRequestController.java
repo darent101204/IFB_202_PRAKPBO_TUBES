@@ -67,4 +67,36 @@ public class PickupRequestController {
         pickupRequestService.makeCollective(masterId, childIds, user);
         return "redirect:/dashboard";
     }
+
+    @GetMapping("/{id}/edit")
+    public String editForm(@PathVariable Long id, Model model) {
+        PickupRequest req = pickupRequestService.findById(id);
+
+        PickupRequestDTO dto = new PickupRequestDTO();
+        dto.setNotes(req.getNotes());
+        dto.setScheduledDate(req.getScheduledDate());
+
+        model.addAttribute("requestDTO", dto);
+        model.addAttribute("id", id);
+
+        return "requests/edit";
+    }
+
+    @PostMapping("/{id}/edit")
+    public String update(@PathVariable Long id,
+                        @ModelAttribute PickupRequestDTO dto,
+                        HttpSession session) {
+
+        User user = (User) session.getAttribute("loggedInUser");
+        pickupRequestService.updateRequest(id, dto, user);
+
+        return "redirect:/dashboard";
+    }
+
+    @PostMapping("/{id}/delete")
+    public String delete(@PathVariable Long id) {
+        pickupRequestService.deleteById(id);
+        return "redirect:/dashboard";
+    }
+
 }

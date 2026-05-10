@@ -235,6 +235,19 @@ public class PickupRequestServiceImpl implements PickupRequestService {
         }
     }
 
+    // ─── UPDATE REQUEST ──────────────────────────────────────────────────────────
+    @Override
+    public PickupRequest updateRequest(Long id, PickupRequestDTO dto, User user) {
+        PickupRequest request = findById(id);
+
+        // HANYA 2 FIELD YANG BOLEH DIUBAH
+        request.setNotes(dto.getNotes());
+        request.setScheduledDate(dto.getScheduledDate());
+
+        // RT TIDAK DIUBAH (sesuai permintaan kamu)
+        return pickupRequestRepository.save(request);
+    }
+
     // ─── COLLECTIVE ──────────────────────────────────────────────────────────
 
     @Override
