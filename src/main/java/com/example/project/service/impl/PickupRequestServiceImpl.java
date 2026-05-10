@@ -78,6 +78,7 @@ public class PickupRequestServiceImpl implements PickupRequestService {
 
             PickupRequest request = new PickupRequest();
             request.setResident(resident);
+            request.setCreatedBy(resident);
             request.setRt(rt);
             request.setRegion(region);
             request.setStatus(RequestStatus.PENDING_APPROVAL);

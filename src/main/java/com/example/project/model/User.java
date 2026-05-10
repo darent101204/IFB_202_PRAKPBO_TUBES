@@ -36,7 +36,7 @@ public class User {
     @JoinColumn(name = "region_id")
     private Region region;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "rt_id")
     private Rt rt;
 
