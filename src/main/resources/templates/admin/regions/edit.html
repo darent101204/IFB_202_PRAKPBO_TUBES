@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
+<html lang="id" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/main}">
 <head>
@@ -28,9 +28,9 @@
                         <input type="hidden" th:field="*{id}"/>
 
                         <!-- NAME -->
-                        <div class="mb-3">
-                            <label class="form-label">Nama Region</label>
-                            <input type="text"
+<div class="mb-3">
+                            <label class="form-label" for="region-name">Nama Region</label>
+                            <input id="region-name" type="text"
                                    class="form-control"
                                    th:field="*{name}"
                                    required>
@@ -38,8 +38,8 @@
 
                         <!-- DESCRIPTION -->
                         <div class="mb-3">
-                            <label class="form-label">Deskripsi</label>
-                            <textarea class="form-control"
+<label class="form-label" for="region-description">Deskripsi</label>
+                            <textarea id="region-description" class="form-control"
                                       th:field="*{description}"
                                       rows="4">
                             </textarea>

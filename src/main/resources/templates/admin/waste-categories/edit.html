@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
+<html lang="id" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/main}">
 <head>
@@ -29,8 +29,8 @@
 
                         <!-- NAME -->
                         <div class="mb-3">
-                            <label class="form-label">Nama Kategori</label>
-                            <input type="text"
+                            <label class="form-label" for="wastecat-name">Nama Kategori</label>
+                            <input id="wastecat-name" type="text"
                                    class="form-control"
                                    th:field="*{name}"
                                    required>
@@ -38,8 +38,8 @@
 
                         <!-- DESCRIPTION -->
                         <div class="mb-3">
-                            <label class="form-label">Deskripsi</label>
-                            <textarea class="form-control"
+                            <label class="form-label" for="wastecat-description">Deskripsi</label>
+                            <textarea id="wastecat-description" class="form-control"
                                       th:field="*{description}"
                                       rows="3">
                             </textarea>
@@ -47,8 +47,8 @@
 
                         <!-- UNIT -->
                         <div class="mb-3">
-                            <label class="form-label">Unit</label>
-                            <input type="text"
+                            <label class="form-label" for="wastecat-unit">Unit</label>
+                            <input id="wastecat-unit" type="text"
                                    class="form-control"
                                    th:field="*{unit}"
                                    required>

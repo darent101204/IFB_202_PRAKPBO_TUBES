@@ -81,15 +81,16 @@
         <div class="card mt-4">
             <div class="card-header">Semua Request di RT Saya</div>
             <div class="card-body">
-                <table class="table table-sm">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Warga</th>
-                            <th>Status</th>
-                            <th>Collector</th>
-                        </tr>
-                    </thead>
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Warga</th>
+                                <th>Status</th>
+                                <th>Collector</th>
+                            </tr>
+                        </thead>
                         <tbody>
                             <tr th:each="req : ${rtRequests}" th:if="${rtRequests != null}">
                                 <td th:text="${req.id}"></td>
@@ -104,7 +105,8 @@
                                 <td colspan="4" class="text-center text-muted">Belum ada request.</td>
                             </tr>
                         </tbody>
-                </table>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

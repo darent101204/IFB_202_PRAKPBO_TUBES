@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" 
+<html lang="id" xmlns:th="http://www.thymeleaf.org" 
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/main}">
 <head>
@@ -14,7 +14,7 @@
                 <span>Daftar Kategori</span>
                 <a th:href="@{/admin/waste-categories/create}" class="btn btn-sm btn-primary">Tambah Kategori</a>
             </div>
-            <div class="card-body p-0">
+            <div class="card-body p-0 table-responsive">
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
@@ -32,19 +32,23 @@
                             <td th:text="${cat.unit}"></td>
                             <td th:text="${cat.description}"></td>
                             <td>
-                                <a th:href="@{/admin/waste-categories/{id}/edit(id=${cat.id})}" 
-                                   class="btn btn-sm btn-outline-primary">
-                                    <i class="bi bi-pencil"></i>
+<a th:href="@{/admin/waste-categories/{id}/edit(id=${cat.id})}" 
+                                   class="btn btn-sm btn-outline-primary"
+                                   title="Edit Kategori" aria-label="Edit Kategori">
+<i class="bi bi-pencil" aria-hidden="true"></i>
+                                    <span class="visually-hidden">Edit</span>
                                 </a>
                             
                                 <form th:action="@{/admin/waste-categories/{id}/delete(id=${cat.id})}"
                                       method="post"
-                                      style="display:inline"
+                                      class="d-inline"
                                       onsubmit="return confirm('Hapus kategori ini?')">
                             
-                                    <button type="submit"
-                                            class="btn btn-sm btn-outline-danger">
-                                        <i class="bi bi-trash"></i>
+<button type="submit"
+                                            class="btn btn-sm btn-outline-danger"
+                                            title="Hapus Kategori" aria-label="Hapus Kategori">
+<i class="bi bi-trash" aria-hidden="true"></i>
+                                        <span class="visually-hidden">Hapus</span>
                                     </button>
                             
                                 </form>

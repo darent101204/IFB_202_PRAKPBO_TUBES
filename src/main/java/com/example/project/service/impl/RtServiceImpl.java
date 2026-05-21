@@ -1,6 +1,7 @@
 package com.example.project.service.impl;
 
 import com.example.project.dto.RtDTO;
+import com.example.project.exception.BusinessException;
 import com.example.project.exception.ResourceNotFoundException;
 import com.example.project.model.Region;
 import com.example.project.model.Rt;
@@ -8,6 +9,7 @@ import com.example.project.repository.RegionRepository;
 import com.example.project.repository.RtRepository;
 import com.example.project.service.RtService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,25 +41,19 @@ public class RtServiceImpl implements RtService {
 
     @Override
     public Rt save(RtDTO dto) {
-        Region region = regionRepository.findById(dto.getRegionId())
-                .orElseThrow(() -> new ResourceNotFoundException("Region", dto.getRegionId()));
+        validate(dto);
+        Region region = findRegion(dto.getRegionId());
         Rt rt = new Rt();
-        rt.setName(dto.getName());
-        rt.setRegion(region);
-        rt.setContactPhone(dto.getContactPhone());
-        rt.setAddress(dto.getAddress());
+        apply(dto, rt, region);
         return rtRepository.save(rt);
     }
 
     @Override
     public Rt update(Long id, RtDTO dto) {
+        validate(dto);
         Rt rt = findById(id);
-        Region region = regionRepository.findById(dto.getRegionId())
-                .orElseThrow(() -> new ResourceNotFoundException("Region", dto.getRegionId()));
-        rt.setName(dto.getName());
-        rt.setRegion(region);
-        rt.setContactPhone(dto.getContactPhone());
-        rt.setAddress(dto.getAddress());
+        Region region = findRegion(dto.getRegionId());
+        apply(dto, rt, region);
         return rtRepository.save(rt);
     }
 
@@ -66,6 +62,31 @@ public class RtServiceImpl implements RtService {
         if (!rtRepository.existsById(id)) {
             throw new ResourceNotFoundException("RT", id);
         }
-        rtRepository.deleteById(id);
+        try {
+            rtRepository.deleteById(id);
+        } catch (DataIntegrityViolationException e) {
+            throw new BusinessException("RT tidak dapat dihapus karena masih digunakan oleh user atau request");
+        }
+    }
+
+    private Region findRegion(Long regionId) {
+        return regionRepository.findById(regionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Region", regionId));
+    }
+
+    private void apply(RtDTO dto, Rt rt, Region region) {
+        rt.setName(dto.getName().trim());
+        rt.setRegion(region);
+        rt.setContactPhone(dto.getContactPhone());
+        rt.setAddress(dto.getAddress());
+    }
+
+    private void validate(RtDTO dto) {
+        if (dto.getName() == null || dto.getName().isBlank()) {
+            throw new BusinessException("Nama RT tidak boleh kosong");
+        }
+        if (dto.getRegionId() == null) {
+            throw new BusinessException("Region RT harus dipilih");
+        }
     }
 }

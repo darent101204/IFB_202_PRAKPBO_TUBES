@@ -26,16 +26,16 @@
                 </li>
 
                 <!-- Admin Menus -->
-                <li th:if="${session.userRole == 'ADMIN'}" th:classappend="${currentUri.startsWith('/users') ? 'active' : ''}">
+                <li th:if="${session.userRole == 'ADMIN'}" th:classappend="${currentUri != null and currentUri.startsWith('/users') ? 'active' : ''}">
                     <a th:href="@{/users}"><i class="bi bi-people"></i> Kelola User</a>
                 </li>
-                <li th:if="${session.userRole == 'ADMIN'}" th:classappend="${currentUri.startsWith('/admin/regions') ? 'active' : ''}">
+                <li th:if="${session.userRole == 'ADMIN'}" th:classappend="${currentUri != null and currentUri.startsWith('/admin/regions') ? 'active' : ''}">
                     <a th:href="@{/admin/regions}"><i class="bi bi-geo-alt"></i> Kelola Region</a>
                 </li>
-                <li th:if="${session.userRole == 'ADMIN'}" th:classappend="${currentUri.startsWith('/admin/rts') ? 'active' : ''}">
+                <li th:if="${session.userRole == 'ADMIN'}" th:classappend="${currentUri != null and currentUri.startsWith('/admin/rts') ? 'active' : ''}">
                     <a th:href="@{/admin/rts}"><i class="bi bi-building"></i> Kelola RT</a>
                 </li>
-                <li th:if="${session.userRole == 'ADMIN'}" th:classappend="${currentUri.startsWith('/admin/waste-categories') ? 'active' : ''}">
+                <li th:if="${session.userRole == 'ADMIN'}" th:classappend="${currentUri != null and currentUri.startsWith('/admin/waste-categories') ? 'active' : ''}">
                     <a th:href="@{/admin/waste-categories}"><i class="bi bi-tags"></i> Kategori Limbah</a>
                 </li>
 
@@ -49,12 +49,15 @@
         <div id="content">
             <nav class="navbar navbar-expand-lg navbar-light bg-light">
                 <div class="container-fluid">
+                    <button class="btn btn-outline-secondary sidebar-toggle d-lg-none me-2" type="button" aria-label="Toggle navigation">
+                        <i class="bi bi-list"></i>
+                    </button>
                     <span class="navbar-brand mb-0 h1" layout:fragment="page-title">Dashboard</span>
                     <div class="ms-auto d-flex align-items-center">
-                        <span class="me-3 text-muted">
+                        <span class="user-chip d-inline-flex align-items-center gap-2">
                             <i class="bi bi-person-circle"></i> 
-                            <span th:text="${session.loggedInUser != null ? session.loggedInUser.name : 'User'}">User</span>
-                            (<small th:text="${session.userRole}"></small>)
+                            <span class="user-name" th:text="${session.loggedInUser != null ? session.loggedInUser.name : 'User'}">User</span>
+                            <span class="role-brackets">(</span><small th:text="${session.userRole}"></small><span class="role-brackets">)</span>
                         </span>
                     </div>
                 </div>
@@ -69,5 +72,19 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        var sidebarToggle = document.querySelector(".sidebar-toggle");
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener("click", function () {
+                document.body.classList.toggle("sidebar-open");
+            });
+        }
+
+        document.querySelectorAll("#sidebar a").forEach(function (link) {
+            link.addEventListener("click", function () {
+                document.body.classList.remove("sidebar-open");
+            });
+        });
+    </script>
 </body>
 </html>
