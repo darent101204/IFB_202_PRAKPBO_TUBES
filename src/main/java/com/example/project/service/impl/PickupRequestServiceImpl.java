@@ -250,6 +250,38 @@ public class PickupRequestServiceImpl implements PickupRequestService {
         pickupRequestRepository.deleteById(id);
     }
 
+    @Override
+public PickupRequest updateRequest(Long id, PickupRequestDTO dto, User user) {
+
+    PickupRequest request = findById(id);
+
+    if (user == null) {
+        throw new BusinessException("User tidak valid");
+    }
+
+    // hanya resident pemilik request yang boleh edit
+    if (user.getRole() == Role.RESIDENT) {
+
+        if (request.getResident() == null ||
+            !request.getResident().getId().equals(user.getId())) {
+            throw new BusinessException("Anda tidak berhak mengubah request ini");
+        }
+
+        if (request.getStatus() != RequestStatus.PENDING_APPROVAL) {
+            throw new BusinessException(
+                    "Request yang sudah diproses tidak dapat diubah");
+        }
+    }
+
+    if (dto.getScheduledDate() != null) {
+        request.setScheduledDate(dto.getScheduledDate());
+    }
+
+    request.setNotes(dto.getNotes());
+
+    return pickupRequestRepository.save(request);
+}
+
     private void validateResidentRequest(PickupRequestDTO dto, User resident) {
         if (resident == null || resident.getRole() != Role.RESIDENT) {
             throw new BusinessException("Hanya resident yang dapat membuat request penjemputan");
