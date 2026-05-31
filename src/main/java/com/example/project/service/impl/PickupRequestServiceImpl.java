@@ -78,6 +78,7 @@ public class PickupRequestServiceImpl implements PickupRequestService {
 
             PickupRequest request = new PickupRequest();
             request.setResident(resident);
+            request.setCreatedBy(resident);
             request.setRt(rt);
             request.setRegion(region);
             request.setStatus(RequestStatus.PENDING_APPROVAL);
@@ -232,6 +233,19 @@ public class PickupRequestServiceImpl implements PickupRequestService {
             if (e instanceof ResourceNotFoundException || e instanceof BusinessException) throw e;
             throw new BusinessException("Gagal mengubah status request: " + e.getMessage());
         }
+    }
+
+    // ─── UPDATE REQUEST ──────────────────────────────────────────────────────────
+    @Override
+    public PickupRequest updateRequest(Long id, PickupRequestDTO dto, User user) {
+        PickupRequest request = findById(id);
+
+        // HANYA 2 FIELD YANG BOLEH DIUBAH
+        request.setNotes(dto.getNotes());
+        request.setScheduledDate(dto.getScheduledDate());
+
+        // RT TIDAK DIUBAH (sesuai permintaan kamu)
+        return pickupRequestRepository.save(request);
     }
 
     // ─── COLLECTIVE ──────────────────────────────────────────────────────────

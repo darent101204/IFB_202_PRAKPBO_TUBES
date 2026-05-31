@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title>Edit Request</title>
+</head>
+<body>
+
+<div layout:fragment="page-title">Edit Request Penjemputan</div>
+
+<div layout:fragment="content">
+
+    <div class="card">
+        <div class="card-body">
+
+            <form th:action="@{/requests/{id}/edit(id=${id})}"
+                  th:object="${requestDTO}"
+                  method="post">
+
+                <!-- RT TIDAK ADA (sesuai permintaan kamu) -->
+
+                <!-- NOTES -->
+                <div class="mb-3">
+                    <label class="form-label">Catatan / Keterangan Limbah</label>
+                    <textarea class="form-control"
+                              th:field="*{notes}"
+                              rows="4"></textarea>
+                </div>
+
+                <!-- SCHEDULE -->
+                <div class="mb-3">
+                    <label class="form-label">Rencana Tanggal Penjemputan</label>
+                    <input type="date"
+                           class="form-control"
+                           th:field="*{scheduledDate}">
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    Update
+                </button>
+
+                <a th:href="@{/dashboard}" class="btn btn-secondary">
+                    Batal
+                </a>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

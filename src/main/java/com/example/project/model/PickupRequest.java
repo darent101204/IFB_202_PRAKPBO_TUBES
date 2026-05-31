@@ -27,6 +27,10 @@ public class PickupRequest {
     private User resident;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by", nullable = false)
+    private User createdBy;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "rt_id", nullable = false)
     private Rt rt;
 

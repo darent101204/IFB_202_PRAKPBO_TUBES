@@ -56,6 +56,7 @@
                                 <th>Status</th>
                                 <th>Collector</th>
                                 <th>Catatan</th>
+                                <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -69,6 +70,25 @@
                                 </td>
                                 <td th:text="${req.assignedCollector?.name ?: '-'}">Collector</td>
                                 <td th:text="${req.notes}">Notes</td>
+                                <td>
+                                    <!-- EDIT -->
+                                    <a th:href="@{/requests/{id}/edit(id=${req.id})}"
+                                       class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                
+                                    <!-- DELETE -->
+                                    <form th:action="@{/requests/{id}/delete(id=${req.id})}"
+                                          method="post"
+                                          style="display:inline"
+                                          onsubmit="return confirm('Hapus request ini?')">
+                                
+                                        <button type="submit"
+                                                class="btn btn-sm btn-outline-danger">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
                             </tr>
                             <tr th:if="${myRequests == null or #lists.isEmpty(myRequests)}">
                                 <td colspan="6" class="text-center text-muted">Belum ada riwayat request.</td>
