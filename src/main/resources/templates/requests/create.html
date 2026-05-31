@@ -19,7 +19,7 @@
                                 <select class="form-select" th:field="*{rtId}" required>
                                     <option value="" disabled selected>Pilih RT...</option>
                                     <!-- Simplified: showing user's RT if exists -->
-                                    <option th:if="${session.loggedInUser.rt != null}" 
+                                    <option th:if="${session.loggedInUser != null and session.loggedInUser.rt != null}" 
                                             th:value="${session.loggedInUser.rt.id}" 
                                             th:text="${session.loggedInUser.rt.name}" selected></option>
                                 </select>

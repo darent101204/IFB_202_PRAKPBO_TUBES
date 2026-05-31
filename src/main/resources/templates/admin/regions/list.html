@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" 
+<html lang="id" xmlns:th="http://www.thymeleaf.org" 
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/main}">
 <head>
@@ -14,7 +14,7 @@
                 <span>Daftar Wilayah</span>
                 <a th:href="@{/admin/regions/create}" class="btn btn-sm btn-primary">Tambah Region</a>
             </div>
-            <div class="card-body p-0">
+            <div class="card-body p-0 table-responsive">
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
@@ -30,7 +30,33 @@
                             <td th:text="${r.name}"></td>
                             <td th:text="${r.description}"></td>
                             <td>
-                                <a th:href="@{/admin/regions/{id}/edit(id=${r.id})}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
+
+                                <a th:href="@{/admin/regions/{id}/edit(id=${r.id})}"
+                                   class="btn btn-sm btn-outline-primary"
+                                   title="Edit Region"
+                                   aria-label="Edit Region">
+                                    <i class="bi bi-pencil" aria-hidden="true"></i>
+                                    <span class="visually-hidden">Edit</span>
+                                </a>
+                            
+
+                                <form th:action="@{/admin/regions/{id}/delete(id=${r.id})}"
+                                      method="post"
+                                      class="d-inline"
+                                      onsubmit="return confirm('Hapus region ini?')">
+                            
+
+
+                                    <button type="submit"
+
+                                            class="btn btn-sm btn-outline-danger"
+                                            title="Hapus Region"
+                                            aria-label="Hapus Region">
+                                        <i class="bi bi-trash" aria-hidden="true"></i>
+                                        <span class="visually-hidden">Hapus</span>
+                                    </button>
+                            
+                                </form>
                             </td>
                         </tr>
                     </tbody>

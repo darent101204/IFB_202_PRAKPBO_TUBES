@@ -35,7 +35,7 @@ public class AuthController {
     @PostMapping("/login")
     public String doLogin(@ModelAttribute LoginDTO loginDTO,
                           HttpSession session, Model model) {
-        String email = loginDTO.getEmail();
+        String email = loginDTO.getEmail() != null ? loginDTO.getEmail().trim().toLowerCase() : null;
         String password = loginDTO.getPassword();
 
         if (email == null || email.isBlank() || password == null || password.isBlank()) {
