@@ -1,0 +1,1115 @@
+/* ============================================================
+   Smart Waste System — Modern Theme (Phase 5A)
+   ============================================================ */
+
+/* ---------- Google Font ---------- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+/* ============================================================
+   1. DESIGN TOKENS (Light)
+   ============================================================ */
+:root {
+    /* Brand */
+    --primary: #15803D;
+    --primary-light: #22C55E;
+    --primary-dark: #0F5132;
+    --primary-gradient: linear-gradient(135deg, #15803D 0%, #22C55E 100%);
+
+    --secondary: #0F766E;
+    --secondary-light: #2DD4BF;
+    --secondary-gradient: linear-gradient(135deg, #0F766E 0%, #2DD4BF 100%);
+
+    --accent: #F59E0B;
+    --accent-light: #FCD34D;
+    --accent-gradient: linear-gradient(135deg, #D97706 0%, #FCD34D 100%);
+
+    --danger: #EF4444;
+    --danger-light: #FCA5A5;
+    --danger-gradient: linear-gradient(135deg, #DC2626 0%, #F87171 100%);
+
+    --info: #0EA5E9;
+    --info-light: #7DD3FC;
+    --info-gradient: linear-gradient(135deg, #0284C7 0%, #38BDF8 100%);
+
+    /* Surfaces */
+    --background: #F1F5F9;
+    --surface: #FFFFFF;
+    --surface-hover: #F8FAFC;
+    --surface-raised: #FFFFFF;
+
+    /* Text */
+    --text: #0F172A;
+    --text-secondary: #475569;
+    --muted: #94A3B8;
+
+    /* Borders */
+    --border: #E2E8F0;
+    --border-light: #F1F5F9;
+
+    /* Layout */
+    --sidebar-width: 272px;
+    --sidebar-bg: linear-gradient(180deg, #0F2419 0%, #0A1F14 50%, #071810 100%);
+    --navbar-height: 68px;
+
+    /* Shape */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+    --radius-pill: 999px;
+
+    /* Shadows */
+    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.06);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.06);
+
+    /* Transitions */
+    --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+    --duration-fast: 150ms;
+    --duration-normal: 250ms;
+    --duration-slow: 350ms;
+}
+
+/* ============================================================
+   2. DARK MODE TOKENS
+   ============================================================ */
+[data-theme="dark"] {
+    --background: #0F172A;
+    --surface: #1E293B;
+    --surface-hover: #334155;
+    --surface-raised: #1E293B;
+
+    --text: #F1F5F9;
+    --text-secondary: #CBD5E1;
+    --muted: #64748B;
+
+    --border: #334155;
+    --border-light: #1E293B;
+
+    --sidebar-bg: linear-gradient(180deg, #020617 0%, #0F172A 100%);
+
+    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+}
+
+/* ============================================================
+   3. BASE RESET & GLOBAL
+   ============================================================ */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--background);
+    color: var(--text);
+    min-height: 100vh;
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================================
+   4. LAYOUT — Wrapper
+   ============================================================ */
+#wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* ============================================================
+   5. SIDEBAR
+   ============================================================ */
+#sidebar {
+    width: var(--sidebar-width);
+    background: var(--sidebar-bg);
+    color: #fff;
+    position: fixed;
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: 1040;
+    transition: transform var(--duration-normal) var(--ease-smooth),
+                box-shadow var(--duration-normal) var(--ease-smooth);
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Scrollbar */
+#sidebar::-webkit-scrollbar { width: 4px; }
+#sidebar::-webkit-scrollbar-track { background: transparent; }
+#sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+
+/* Brand */
+#sidebar .sidebar-header {
+    padding: 28px 24px 22px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    font-size: 1.1rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #fff;
+}
+
+#sidebar .sidebar-header i {
+    font-size: 1.5rem;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Nav list */
+#sidebar ul.components {
+    padding: 16px 12px;
+    margin: 0;
+}
+
+#sidebar ul li {
+    margin-bottom: 4px;
+}
+
+#sidebar ul li a {
+    padding: 11px 16px;
+    min-height: 44px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: rgba(255, 255, 255, 0.65);
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    transition: all var(--duration-fast) var(--ease-smooth);
+    position: relative;
+}
+
+#sidebar ul li a i {
+    font-size: 1.15rem;
+    width: 22px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+#sidebar ul li a:hover,
+#sidebar ul li a:focus {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(8px);
+    outline: none;
+    transform: translateX(2px);
+}
+
+/* Active */
+#sidebar ul li.active > a {
+    color: #fff;
+    background: rgba(34, 197, 94, 0.15);
+    box-shadow: inset 3px 0 0 var(--primary-light);
+    font-weight: 700;
+}
+
+/* Logout */
+#sidebar ul li a.text-danger {
+    color: #FCA5A5 !important;
+    margin-top: 8px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding-top: 16px;
+}
+
+#sidebar ul li a.text-danger:hover {
+    background: rgba(239, 68, 68, 0.12);
+    color: #fff !important;
+}
+
+/* ============================================================
+   6. MAIN CONTENT
+   ============================================================ */
+#content {
+    width: 100%;
+    margin-left: var(--sidebar-width);
+    padding-top: var(--navbar-height);
+    min-height: 100vh;
+    background: var(--background);
+}
+
+/* ============================================================
+   7. TOP NAVBAR
+   ============================================================ */
+.navbar {
+    height: var(--navbar-height);
+    background: rgba(255, 255, 255, 0.85) !important;
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border-bottom: 1px solid var(--border);
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: var(--sidebar-width);
+    z-index: 1030;
+    padding: 0 28px;
+    transition: left var(--duration-normal) var(--ease-smooth),
+                background var(--duration-normal) var(--ease-smooth);
+}
+
+[data-theme="dark"] .navbar {
+    background: rgba(30, 41, 59, 0.85) !important;
+}
+
+.navbar-brand {
+    color: var(--text) !important;
+    font-weight: 800;
+    font-size: 1.1rem;
+}
+
+/* User chip */
+.user-chip {
+    background: linear-gradient(135deg, rgba(21, 128, 61, 0.08), rgba(34, 197, 94, 0.08));
+    border: 1px solid rgba(21, 128, 61, 0.15);
+    border-radius: var(--radius-pill);
+    color: var(--primary-dark);
+    padding: 8px 16px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    max-width: 48vw;
+    transition: all var(--duration-fast) var(--ease-smooth);
+}
+
+[data-theme="dark"] .user-chip {
+    color: var(--primary-light);
+    background: rgba(34, 197, 94, 0.1);
+    border-color: rgba(34, 197, 94, 0.2);
+}
+
+.user-chip .user-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Theme toggle */
+.theme-toggle-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.15rem;
+    color: var(--text-secondary);
+    transition: all var(--duration-fast) var(--ease-smooth);
+}
+
+.theme-toggle-btn:hover {
+    background: var(--surface-hover);
+    color: var(--text);
+    transform: rotate(15deg);
+}
+
+[data-theme="dark"] .theme-toggle-btn {
+    border-color: var(--border);
+    color: var(--accent);
+}
+
+/* Sidebar toggle */
+.sidebar-toggle {
+    border-color: var(--border);
+    color: var(--text-secondary);
+    min-width: 40px;
+    min-height: 40px;
+    border-radius: var(--radius-md);
+    transition: all var(--duration-fast) var(--ease-smooth);
+}
+
+.sidebar-toggle:hover {
+    background: var(--surface-hover);
+}
+
+/* ============================================================
+   8. PAGE CONTAINER
+   ============================================================ */
+.container-fluid.p-4 {
+    padding: 28px !important;
+    max-width: 1600px;
+}
+
+/* ============================================================
+   9. WELCOME HEADER
+   ============================================================ */
+.welcome-header {
+    margin-bottom: 28px;
+}
+
+.welcome-header .welcome-greeting {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--text);
+    margin: 0;
+    line-height: 1.3;
+}
+
+.welcome-header .welcome-subtitle {
+    font-size: 0.9rem;
+    color: var(--muted);
+    margin: 4px 0 0;
+    font-weight: 500;
+}
+
+.welcome-header .welcome-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.welcome-header .welcome-meta .badge-role {
+    background: linear-gradient(135deg, rgba(21, 128, 61, 0.1), rgba(34, 197, 94, 0.1));
+    color: var(--primary);
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border: 1px solid rgba(21, 128, 61, 0.15);
+}
+
+/* ============================================================
+   10. STAT CARDS (Modern)
+   ============================================================ */
+.stat-card {
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    color: #fff;
+    margin-bottom: 20px;
+    min-height: 130px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border: 0;
+    position: relative;
+    overflow: hidden;
+    transition: transform var(--duration-fast) var(--ease-smooth),
+                box-shadow var(--duration-fast) var(--ease-smooth);
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    width: 100px;
+    height: 100px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    transition: transform var(--duration-normal) var(--ease-smooth);
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+}
+
+.stat-card:hover::before {
+    transform: scale(1.3);
+}
+
+.stat-card h3 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin: 0;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+}
+
+.stat-card p {
+    margin: 6px 0 0;
+    opacity: 0.9;
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 0.01em;
+}
+
+.stat-card .stat-icon {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 1.5rem;
+    opacity: 0.4;
+}
+
+/* Stat card gradients */
+.stat-card.bg-primary { background: var(--primary-gradient) !important; box-shadow: 0 4px 16px rgba(21, 128, 61, 0.25); }
+.stat-card.bg-info { background: var(--info-gradient) !important; box-shadow: 0 4px 16px rgba(14, 165, 233, 0.25); }
+.stat-card.bg-warning { background: var(--accent-gradient) !important; box-shadow: 0 4px 16px rgba(245, 158, 11, 0.25); }
+.stat-card.bg-success { background: var(--primary-gradient) !important; box-shadow: 0 4px 16px rgba(21, 128, 61, 0.25); }
+.stat-card.bg-danger { background: var(--danger-gradient) !important; box-shadow: 0 4px 16px rgba(239, 68, 68, 0.25); }
+.stat-card.bg-secondary { background: var(--secondary-gradient) !important; box-shadow: 0 4px 16px rgba(15, 118, 110, 0.25); }
+
+/* ============================================================
+   11. CARDS (Modern)
+   ============================================================ */
+.card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 24px;
+    overflow: hidden;
+    transition: box-shadow var(--duration-fast) var(--ease-smooth);
+}
+
+.card:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.card-header {
+    background-color: var(--surface) !important;
+    border-bottom: 1px solid var(--border);
+    font-weight: 700;
+    font-size: 0.95rem;
+    padding: 18px 24px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.card-header.bg-warning {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(252, 211, 77, 0.08)) !important;
+    border-bottom-color: rgba(245, 158, 11, 0.15);
+    color: #92400E;
+}
+
+.card-header.bg-primary {
+    background: linear-gradient(135deg, rgba(21, 128, 61, 0.08), rgba(34, 197, 94, 0.08)) !important;
+    border-bottom-color: rgba(21, 128, 61, 0.15);
+    color: var(--primary-dark) !important;
+}
+
+[data-theme="dark"] .card-header.bg-warning {
+    color: var(--accent-light);
+}
+
+[data-theme="dark"] .card-header.bg-primary {
+    color: var(--primary-light) !important;
+}
+
+.card-body {
+    padding: 24px;
+}
+
+/* ============================================================
+   12. TABLES (Modern)
+   ============================================================ */
+.table {
+    margin-bottom: 0;
+    color: var(--text);
+    font-size: 0.875rem;
+}
+
+.table thead th {
+    background: var(--surface-hover);
+    border-bottom: 2px solid var(--border);
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+    padding: 14px 16px;
+}
+
+.table tbody td {
+    border-color: var(--border-light);
+    vertical-align: middle;
+    padding: 14px 16px;
+    transition: background var(--duration-fast) var(--ease-smooth);
+}
+
+.table-hover tbody tr {
+    transition: all var(--duration-fast) var(--ease-smooth);
+}
+
+.table-hover tbody tr:hover,
+.table tbody tr:hover {
+    background-color: rgba(21, 128, 61, 0.03) !important;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-xs);
+}
+
+[data-theme="dark"] .table-hover tbody tr:hover,
+[data-theme="dark"] .table tbody tr:hover {
+    background-color: rgba(34, 197, 94, 0.05) !important;
+}
+
+.table-responsive {
+    border-radius: var(--radius-md);
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, 0.015);
+}
+
+[data-theme="dark"] .table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+/* ============================================================
+   13. BADGES — Pill Style
+   ============================================================ */
+.badge {
+    border-radius: var(--radius-pill);
+    font-weight: 600;
+    padding: 6px 14px;
+    font-size: 0.75rem;
+    letter-spacing: 0.02em;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+}
+
+.badge-pending-approval {
+    background-color: rgba(245, 158, 11, 0.12);
+    color: #92400E;
+    border: 1px solid rgba(245, 158, 11, 0.2);
+}
+.badge-pending {
+    background-color: rgba(100, 116, 139, 0.1);
+    color: #475569;
+    border: 1px solid rgba(100, 116, 139, 0.2);
+}
+.badge-scheduled {
+    background-color: rgba(14, 165, 233, 0.1);
+    color: #0369A1;
+    border: 1px solid rgba(14, 165, 233, 0.2);
+}
+.badge-on-progress {
+    background-color: rgba(245, 158, 11, 0.12);
+    color: #92400E;
+    border: 1px solid rgba(245, 158, 11, 0.2);
+}
+.badge-completed {
+    background-color: rgba(34, 197, 94, 0.1);
+    color: #15803D;
+    border: 1px solid rgba(34, 197, 94, 0.2);
+}
+.badge-rejected {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #B91C1C;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+/* Dark mode badges */
+[data-theme="dark"] .badge-pending-approval { background-color: rgba(245, 158, 11, 0.15); color: #FCD34D; border-color: rgba(245, 158, 11, 0.25); }
+[data-theme="dark"] .badge-pending { background-color: rgba(100, 116, 139, 0.15); color: #CBD5E1; border-color: rgba(100, 116, 139, 0.25); }
+[data-theme="dark"] .badge-scheduled { background-color: rgba(14, 165, 233, 0.15); color: #7DD3FC; border-color: rgba(14, 165, 233, 0.25); }
+[data-theme="dark"] .badge-on-progress { background-color: rgba(245, 158, 11, 0.15); color: #FCD34D; border-color: rgba(245, 158, 11, 0.25); }
+[data-theme="dark"] .badge-completed { background-color: rgba(34, 197, 94, 0.15); color: #86EFAC; border-color: rgba(34, 197, 94, 0.25); }
+[data-theme="dark"] .badge-rejected { background-color: rgba(239, 68, 68, 0.15); color: #FCA5A5; border-color: rgba(239, 68, 68, 0.25); }
+
+/* ============================================================
+   14. BUTTONS (Modern)
+   ============================================================ */
+.btn {
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-size: 0.875rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 40px;
+    padding: 8px 16px;
+    transition: all var(--duration-fast) var(--ease-smooth);
+    border: 1px solid transparent;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn-sm {
+    min-height: 34px;
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    border-radius: var(--radius-sm);
+}
+
+.btn-primary {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+}
+.btn-primary:hover, .btn-primary:focus {
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
+    color: #fff;
+}
+
+.btn-success {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+}
+.btn-success:hover, .btn-success:focus {
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
+    color: #fff;
+}
+
+.btn-warning {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+}
+.btn-warning:hover, .btn-warning:focus {
+    background: #D97706;
+    border-color: #D97706;
+    color: #fff;
+}
+
+.btn-danger {
+    background: var(--danger);
+    border-color: var(--danger);
+    color: #fff;
+}
+.btn-danger:hover, .btn-danger:focus {
+    background: #DC2626;
+    border-color: #DC2626;
+    color: #fff;
+}
+
+.btn-secondary {
+    background: #64748B;
+    border-color: #64748B;
+    color: #fff;
+}
+
+.btn-outline-primary {
+    border-color: rgba(21, 128, 61, 0.3);
+    color: var(--primary);
+    background: transparent;
+}
+.btn-outline-primary:hover, .btn-outline-primary:focus {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+}
+
+.btn-outline-info {
+    border-color: rgba(14, 165, 233, 0.3);
+    color: var(--info);
+    background: transparent;
+}
+.btn-outline-info:hover, .btn-outline-info:focus {
+    background: var(--info);
+    border-color: var(--info);
+    color: #fff;
+}
+
+.btn-outline-danger {
+    border-color: rgba(239, 68, 68, 0.3);
+    color: var(--danger);
+    background: transparent;
+}
+.btn-outline-danger:hover, .btn-outline-danger:focus {
+    background: var(--danger);
+    border-color: var(--danger);
+    color: #fff;
+}
+
+/* ============================================================
+   15. FORMS
+   ============================================================ */
+.form-label {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.form-control,
+.form-select,
+.input-group-text {
+    border-color: var(--border);
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    color: var(--text);
+    background: var(--surface);
+    transition: border-color var(--duration-fast) var(--ease-smooth),
+                box-shadow var(--duration-fast) var(--ease-smooth);
+}
+
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .form-select,
+[data-theme="dark"] .input-group-text {
+    background: var(--surface-hover);
+    border-color: var(--border);
+    color: var(--text);
+}
+
+.input-group .form-control,
+.input-group .input-group-text {
+    min-height: 44px;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.12);
+}
+
+/* ============================================================
+   16. ALERTS
+   ============================================================ */
+.alert {
+    border-radius: var(--radius-md);
+    border: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 14px 18px;
+}
+
+.alert-danger {
+    background: rgba(239, 68, 68, 0.08);
+    color: #B91C1C;
+    border: 1px solid rgba(239, 68, 68, 0.15);
+}
+
+.alert-success {
+    background: rgba(34, 197, 94, 0.08);
+    color: #15803D;
+    border: 1px solid rgba(34, 197, 94, 0.15);
+}
+
+.alert-info {
+    background: rgba(14, 165, 233, 0.08);
+    color: #0369A1;
+    border: 1px solid rgba(14, 165, 233, 0.15);
+}
+
+/* ============================================================
+   17. MODALS
+   ============================================================ */
+.modal-content {
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-xl);
+    background: var(--surface);
+}
+
+.modal-header {
+    border-bottom: 1px solid var(--border);
+    padding: 20px 24px;
+}
+
+.modal-header.bg-warning {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(252, 211, 77, 0.1)) !important;
+    color: #92400E;
+}
+
+.modal-header.bg-primary {
+    background: linear-gradient(135deg, rgba(21, 128, 61, 0.1), rgba(34, 197, 94, 0.1)) !important;
+    color: var(--primary-dark) !important;
+}
+
+[data-theme="dark"] .modal-header.bg-warning { color: var(--accent-light); }
+[data-theme="dark"] .modal-header.bg-primary { color: var(--primary-light) !important; }
+
+.modal-body {
+    padding: 24px;
+    color: var(--text);
+}
+
+[data-theme="dark"] .modal-body.text-dark {
+    color: var(--text) !important;
+}
+
+.modal-footer {
+    border-top: 1px solid var(--border);
+    padding: 16px 24px;
+}
+
+.modal-title {
+    font-weight: 700;
+    font-size: 1.05rem;
+}
+
+/* ============================================================
+   18. CHART CARDS
+   ============================================================ */
+.chart-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: 24px;
+    min-height: 360px;
+}
+
+.chart-card .chart-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.chart-card .chart-title i {
+    font-size: 1.1rem;
+}
+
+/* ============================================================
+   19. AUTH PAGES (Login & Register)
+   ============================================================ */
+.auth-bg {
+    background:
+        radial-gradient(circle at 20% 15%, rgba(34, 197, 94, 0.15), transparent 20rem),
+        radial-gradient(circle at 80% 80%, rgba(14, 165, 233, 0.1), transparent 20rem),
+        linear-gradient(135deg, #0F2419 0%, #0A1F14 40%, #0F766E 100%);
+    min-height: 100vh;
+    margin: 0;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.auth-card {
+    background: rgba(255, 255, 255, 0.97);
+    backdrop-filter: blur(20px);
+    padding: 40px;
+    border-radius: var(--radius-xl);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1);
+    width: 100%;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.auth-card.login-card {
+    max-width: 440px;
+}
+
+.auth-card.register-card {
+    max-width: 520px;
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.auth-header .auth-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: var(--radius-lg);
+    background: var(--primary-gradient);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+}
+
+.auth-header .auth-icon i {
+    font-size: 1.8rem;
+    color: #fff;
+}
+
+.auth-header h2 {
+    font-weight: 800;
+    color: #0F2419;
+    font-size: 1.6rem;
+    margin: 0;
+}
+
+.auth-header p {
+    color: #64748B;
+    margin: 6px 0 0;
+    font-size: 0.9rem;
+}
+
+/* ============================================================
+   20. RESPONSIVE
+   ============================================================ */
+
+/* Tablet */
+@media (max-width: 1199.98px) {
+    .stat-card h3 {
+        font-size: 1.8rem;
+    }
+}
+
+/* Mobile nav collapse */
+@media (max-width: 991.98px) {
+    #sidebar {
+        transform: translateX(-100%);
+    }
+
+    body.sidebar-open #sidebar {
+        transform: translateX(0);
+        box-shadow: var(--shadow-xl);
+    }
+
+    /* overlay behind sidebar */
+    body.sidebar-open::after {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: 1039;
+        animation: fadeIn var(--duration-fast) var(--ease-smooth);
+    }
+
+    #content {
+        margin-left: 0;
+    }
+
+    .navbar {
+        left: 0;
+        padding-inline: 16px;
+    }
+
+    .container-fluid.p-4 {
+        padding: 20px !important;
+    }
+
+    .navbar-brand {
+        font-size: 1rem;
+    }
+}
+
+/* Small mobile */
+@media (max-width: 575.98px) {
+    :root {
+        --navbar-height: 60px;
+    }
+
+    .user-chip small,
+    .user-chip .role-brackets {
+        display: none;
+    }
+
+    .card-header {
+        align-items: flex-start !important;
+        padding: 14px 16px;
+    }
+
+    .card-header .btn {
+        width: 100%;
+    }
+
+    .btn {
+        width: auto;
+    }
+
+    .d-flex.justify-content-between {
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .d-flex.justify-content-between > .btn,
+    .d-flex.justify-content-between > button {
+        flex: 1 1 160px;
+    }
+
+    .stat-card {
+        min-height: 110px;
+        padding: 18px;
+    }
+
+    .stat-card h3 {
+        font-size: 1.6rem;
+    }
+
+    .welcome-header .welcome-greeting {
+        font-size: 1.25rem;
+    }
+
+    .container-fluid.p-4 {
+        padding: 14px !important;
+    }
+
+    .card-body {
+        padding: 16px;
+    }
+
+    .auth-card {
+        padding: 28px 20px;
+    }
+}
+
+/* ============================================================
+   21. ANIMATIONS
+   ============================================================ */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+    animation: fadeIn var(--duration-normal) var(--ease-smooth);
+}
+
+.slide-up {
+    animation: slideUp var(--duration-slow) var(--ease-smooth);
+}
+
+/* Staggered card animation */
+.stat-card { animation: slideUp 0.4s var(--ease-smooth) backwards; }
+.row > .col-md-3:nth-child(1) .stat-card,
+.row > .col-md-4:nth-child(1) .stat-card { animation-delay: 0.05s; }
+.row > .col-md-3:nth-child(2) .stat-card,
+.row > .col-md-4:nth-child(2) .stat-card { animation-delay: 0.1s; }
+.row > .col-md-3:nth-child(3) .stat-card,
+.row > .col-md-4:nth-child(3) .stat-card { animation-delay: 0.15s; }
+.row > .col-md-3:nth-child(4) .stat-card { animation-delay: 0.2s; }
+
+/* ============================================================
+   22. UTILITIES
+   ============================================================ */
+.text-gradient-primary {
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Photo thumbnails in tables */
+.photo-thumb {
+    width: 56px;
+    height: 56px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    border: 2px solid var(--border);
+    transition: transform var(--duration-fast) var(--ease-smooth);
+}
+
+.photo-thumb:hover {
+    transform: scale(1.08);
+}

@@ -1,0 +1,114 @@
+<!doctype html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layout/main}"
+>
+  <head>
+    <title>Edit User</title>
+  </head>
+  <body>
+    <div layout:fragment="page-title">Edit User</div>
+
+    <div layout:fragment="content" class="slide-up">
+      <div class="row justify-content-center">
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="mb-4">Edit Data User</h4>
+
+              <form
+                th:action="@{/users/{id}/edit(id=${userDTO.id})}"
+                th:object="${userDTO}"
+                method="post"
+              >
+                <div class="mb-3">
+                  <label class="form-label">Nama Lengkap</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    th:field="*{name}"
+                    required
+                  />
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Email</label>
+                  <input
+                    type="email"
+                    class="form-control"
+                    th:field="*{email}"
+                    required
+                  />
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Password Baru (Opsional)</label>
+                  <input
+                    type="password"
+                    class="form-control"
+                    th:field="*{password}"
+                  />
+                  <small class="text-muted">
+                    Kosongkan jika tidak ingin mengubah password.
+                  </small>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Role</label>
+                  <select class="form-select" th:field="*{role}" required>
+                    <option
+                      th:each="r : ${roles}"
+                      th:value="${r}"
+                      th:text="${r}"
+                    ></option>
+                  </select>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Region</label>
+                  <select class="form-select" th:field="*{regionId}">
+                    <option value="">Pilih Region...</option>
+                    <option
+                      th:each="reg : ${regions}"
+                      th:value="${reg.id}"
+                      th:text="${reg.name}"
+                    ></option>
+                  </select>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">RT</label>
+                  <select class="form-select" th:field="*{rtId}">
+                    <option value="">Pilih RT...</option>
+                    <option
+                      th:each="rt : ${rts}"
+                      th:value="${rt.id}"
+                      th:text="${rt.name}"
+                    ></option>
+                  </select>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Status Akun</label>
+                  <select class="form-select" th:field="*{isActive}">
+                    <option th:value="true">Aktif</option>
+                    <option th:value="false">Nonaktif</option>
+                  </select>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                  <a th:href="@{/users}" class="btn btn-secondary"> Kembali </a>
+
+                  <button type="submit" class="btn btn-primary">
+                    Update User
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

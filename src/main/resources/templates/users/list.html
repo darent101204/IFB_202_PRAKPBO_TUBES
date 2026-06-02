@@ -8,7 +8,7 @@
 <body>
     <div layout:fragment="page-title">Manajemen User</div>
 
-    <div layout:fragment="content">
+    <div layout:fragment="content" class="slide-up">
         <div class="card">
             <div class="card-header d-flex justify-content-between">
                 <span>Daftar User Sistem</span>
@@ -16,7 +16,7 @@
             </div>
             <div class="card-body p-0 table-responsive">
                 <table class="table table-hover mb-0">
-                    <thead class="table-light">
+                    <thead>
                         <tr>
                             <th>Nama</th>
                             <th>Email</th>
@@ -31,7 +31,11 @@
                         <tr th:each="u : ${users}">
                             <td th:text="${u.name}"></td>
                             <td th:text="${u.email}"></td>
-                            <td><span class="badge bg-secondary" th:text="${u.role}"></span></td>
+                            <td>
+                                <span class="badge" 
+                                      th:classappend="${#strings.toString(u.role) == 'ADMIN'} ? 'badge-rejected' : (${#strings.toString(u.role) == 'RESIDENT'} ? 'badge-completed' : (${#strings.toString(u.role) == 'RT'} ? 'badge-pending-approval' : 'badge-scheduled'))" 
+                                      th:text="${u.role}"></span>
+                            </td>
                             <td th:text="${u.region != null ? u.region.name : '-'}"></td>
                             <td th:text="${u.rt != null ? u.rt.name : '-'}"></td>
                             <td>

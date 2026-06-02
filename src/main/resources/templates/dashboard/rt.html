@@ -8,36 +8,53 @@
 <body>
     <div layout:fragment="page-title">Dashboard Pengurus RT</div>
 
-    <div layout:fragment="content">
-        <!-- Actions -->
-        <div class="d-flex justify-content-end mb-3">
-            <a th:href="@{/reports/rt/pdf}" class="btn btn-outline-danger shadow-sm">
-                <i class="bi bi-file-earmark-pdf"></i> Export PDF Report
-            </a>
+    <div layout:fragment="content" class="slide-up">
+        <!-- Welcome Header & Actions -->
+        <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+            <div class="welcome-header mb-0">
+                <h1 class="welcome-greeting">Halo, <span th:text="${session.loggedInUser != null ? session.loggedInUser.name : 'Pengurus RT'}">Pengurus RT</span>! 👋</h1>
+                <p class="welcome-subtitle">Kelola dan setujui request penjemputan sampah warga di wilayah Anda.</p>
+                <div class="welcome-meta">
+                    <span class="badge-role" th:text="${session.userRole}">RT</span>
+                    <span class="meta-item">
+                        <i class="bi bi-geo-alt text-success"></i> 
+                        <span th:text="${regionName}">Region</span> - RT <span th:text="${rtName}">RT</span>
+                    </span>
+                </div>
+            </div>
+            <div>
+                <a th:href="@{/reports/rt/pdf}" class="btn btn-danger shadow-sm">
+                    <i class="bi bi-file-earmark-pdf"></i> Export PDF Report
+                </a>
+            </div>
         </div>
 
         <!-- Stats -->
         <div class="row">
             <div class="col-md-3">
                 <div class="stat-card bg-primary">
+                    <div class="stat-icon"><i class="bi bi-journal-text"></i></div>
                     <h3 th:text="${totalRequests}">0</h3>
                     <p>Total Request RT</p>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="stat-card bg-warning">
+                    <div class="stat-icon"><i class="bi bi-exclamation-circle"></i></div>
                     <h3 th:text="${pendingApprovalCount}">0</h3>
                     <p>Perlu Approval</p>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="stat-card bg-info">
+                    <div class="stat-icon"><i class="bi bi-calendar-event"></i></div>
                     <h3 th:text="${scheduledCount}">0</h3>
                     <p>Dalam Jadwal</p>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="stat-card bg-success">
+                    <div class="stat-icon"><i class="bi bi-check-circle"></i></div>
                     <h3 th:text="${completedCount}">0</h3>
                     <p>Total Selesai</p>
                 </div>
@@ -48,6 +65,7 @@
         <div class="row mt-3">
             <div class="col-md-4">
                 <div class="stat-card bg-secondary">
+                    <div class="stat-icon"><i class="bi bi-trash3"></i></div>
                     <h3><span th:text="${totalWaste}">0.0</span> Kg</h3>
                     <p>Total Sampah di Wilayah RT</p>
                 </div>
@@ -93,34 +111,45 @@
                             label: 'Jumlah Request',
                             data: values,
                             backgroundColor: [
-                                'rgba(255, 193, 7, 0.7)',
-                                'rgba(23, 162, 184, 0.7)',
-                                'rgba(40, 167, 69, 0.7)',
-                                'rgba(220, 53, 69, 0.7)'
+                                '#F59E0B',
+                                '#0EA5E9',
+                                '#15803D',
+                                '#EF4444'
                             ],
-                            borderColor: [
-                                'rgba(255, 193, 7, 1)',
-                                'rgba(23, 162, 184, 1)',
-                                'rgba(40, 167, 69, 1)',
-                                'rgba(220, 53, 69, 1)'
-                            ],
-                            borderWidth: 1
+                            borderRadius: 6,
+                            borderWidth: 0
                         }]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: {
-                                    stepSize: 1
-                                }
-                            }
-                        },
                         plugins: {
                             legend: {
                                 display: false
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: {
+                                    display: false
+                                },
+                                ticks: {
+                                    color: 'var(--text-secondary)',
+                                    font: {
+                                        family: "'Inter', sans-serif",
+                                        weight: '600'
+                                    }
+                                }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'var(--border-light)'
+                                },
+                                ticks: {
+                                    stepSize: 1,
+                                    color: 'var(--text-secondary)'
+                                }
                             }
                         }
                     }
@@ -131,7 +160,7 @@
 
         <!-- Pending Approval Table -->
         <div class="card mt-4">
-            <div class="card-header bg-warning text-dark">
+            <div class="card-header bg-warning">
                 <i class="bi bi-clock-history"></i> Menunggu Persetujuan
             </div>
             <div class="card-body">
@@ -154,7 +183,7 @@
                                     <div class="mb-2">
                                         <span th:if="${req.photoPath != null}">
                                             <a target="_blank" th:href="@{'/uploads/' + ${req.photoPath}}">
-                                                <img th:src="@{'/uploads/' + ${req.photoPath}}" style="width:80px; height:80px; object-fit:cover; border-radius:8px;">
+                                                <img th:src="@{'/uploads/' + ${req.photoPath}}" class="photo-thumb" alt="Foto Sampah">
                                             </a>
                                         </span>
                                         <span th:if="${req.photoPath == null}" class="text-muted" style="font-size:0.8rem;">Tidak Ada Foto</span>
@@ -186,17 +215,17 @@
                                     <div class="modal fade text-start" th:id="'detailModal' + ${req.id}" tabindex="-1" aria-hidden="true">
                                         <div class="modal-dialog">
                                             <div class="modal-content">
-                                                <div class="modal-header bg-warning text-dark">
+                                                <div class="modal-header bg-warning">
                                                     <h5 class="modal-title" th:text="'Detail Request #' + ${req.id}">Request #15</h5>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                 </div>
-                                                <div class="modal-body text-dark">
+                                                <div class="modal-body">
                                                     <!-- Foto Sampah Ukuran Lebih Besar -->
                                                     <div class="text-center mb-3">
                                                         <div th:if="${req.photoPath != null}">
                                                             <img th:src="@{'/uploads/' + ${req.photoPath}}" class="img-fluid rounded border shadow-sm" style="max-height: 400px; width: 100%; object-fit: contain;">
                                                         </div>
-                                                        <div th:if="${req.photoPath == null}" class="text-muted border p-4 rounded bg-light">
+                                                        <div th:if="${req.photoPath == null}" class="text-muted border p-4 rounded text-center">
                                                             <i class="bi bi-image" style="font-size: 3rem;"></i><br>
                                                             Tidak ada foto
                                                         </div>

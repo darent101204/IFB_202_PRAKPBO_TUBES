@@ -8,29 +8,46 @@
 <body>
     <div layout:fragment="page-title">Dashboard Warga</div>
 
-    <div layout:fragment="content">
+    <div layout:fragment="content" class="slide-up">
+        <!-- Welcome Header -->
+        <div class="welcome-header mb-4">
+            <h1 class="welcome-greeting">Halo, <span th:text="${session.loggedInUser != null ? session.loggedInUser.name : 'Warga'}">Warga</span>! 👋</h1>
+            <p class="welcome-subtitle">Pantau status pengumpulan sampah dan kontribusi lingkungan Anda di sini.</p>
+            <div class="welcome-meta">
+                <span class="badge-role" th:text="${session.userRole}">Warga</span>
+                <span class="meta-item">
+                    <i class="bi bi-geo-alt text-success"></i> 
+                    <span th:text="${regionName}">Region</span> - RT <span th:text="${rtName}">RT</span>
+                </span>
+            </div>
+        </div>
+
         <!-- Stats Cards -->
         <div class="row">
             <div class="col-md-3">
                 <div class="stat-card bg-primary">
+                    <div class="stat-icon"><i class="bi bi-journal-text"></i></div>
                     <h3 th:text="${totalRequests}">0</h3>
                     <p>Total Request</p>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="stat-card bg-warning">
+                    <div class="stat-icon"><i class="bi bi-clock-history"></i></div>
                     <h3 th:text="${pendingCount}">0</h3>
                     <p>Menunggu Approval</p>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="stat-card bg-info">
+                    <div class="stat-icon"><i class="bi bi-calendar-event"></i></div>
                     <h3 th:text="${scheduledCount}">0</h3>
                     <p>Dijadwalkan</p>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="stat-card bg-success">
+                    <div class="stat-icon"><i class="bi bi-check-circle"></i></div>
                     <h3 th:text="${completedCount}">0</h3>
                     <p>Selesai</p>
                 </div>
@@ -41,6 +58,7 @@
         <div class="row mt-3">
             <div class="col-md-4">
                 <div class="stat-card bg-secondary">
+                    <div class="stat-icon"><i class="bi bi-trash3"></i></div>
                     <h3><span th:text="${totalWaste}">0.0</span> Kg</h3>
                     <p>Total Sampah Terkumpul</p>
                 </div>
@@ -79,28 +97,36 @@
                 }
 
                 new Chart(document.getElementById('residentChart'), {
-                    type: 'pie',
+                    type: 'doughnut',
                     data: {
                         labels: labels,
                         datasets: [{
                             data: values,
                             backgroundColor: [
-                                'rgba(40, 167, 69, 0.7)',
-                                'rgba(0, 123, 255, 0.7)',
-                                'rgba(255, 193, 7, 0.7)',
-                                'rgba(220, 53, 69, 0.7)',
-                                'rgba(111, 66, 193, 0.7)'
-                            ]
+                                '#15803D',
+                                '#0EA5E9',
+                                '#F59E0B',
+                                '#EF4444',
+                                '#8B5CF6'
+                            ],
+                            borderWidth: 2,
+                            borderColor: 'var(--surface)'
                         }]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
+                        cutout: '70%',
                         plugins: {
                             legend: {
                                 position: 'bottom',
                                 labels: {
-                                    boxWidth: 12
+                                    boxWidth: 12,
+                                    color: 'var(--text-secondary)',
+                                    font: {
+                                        family: "'Inter', sans-serif",
+                                        weight: '600'
+                                    }
                                 }
                             }
                         }
@@ -146,7 +172,7 @@
                                 <td>
                                     <span th:if="${req.photoPath != null}">
                                         <a target="_blank" th:href="@{'/uploads/' + ${req.photoPath}}">
-                                            <img th:src="@{'/uploads/' + ${req.photoPath}}" style="width:80px; height:80px; object-fit:cover; border-radius:8px;">
+                                            <img th:src="@{'/uploads/' + ${req.photoPath}}" class="photo-thumb" alt="Foto Sampah">
                                         </a>
                                     </span>
                                     <span th:if="${req.photoPath == null}">-</span>
@@ -189,7 +215,7 @@
                                                     <h5 class="modal-title" th:text="'Detail Request #' + ${req.id}">Request #15</h5>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                 </div>
-                                                <div class="modal-body text-dark">
+                                                <div class="modal-body">
                                                     <!-- Foto Sampah -->
                                                     <div class="text-center mb-3">
                                                         <div th:if="${req.photoPath != null}">

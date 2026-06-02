@@ -10,17 +10,31 @@
   <body>
     <div layout:fragment="page-title">Dashboard Collector</div>
 
-    <div layout:fragment="content">
-      <!-- Actions -->
-      <div class="d-flex justify-content-end mb-3">
-        <a th:href="@{/reports/collector/pdf}" class="btn btn-outline-danger shadow-sm">
-          <i class="bi bi-file-earmark-pdf"></i> Export PDF Report
-        </a>
+    <div layout:fragment="content" class="slide-up">
+      <!-- Welcome Header & Actions -->
+      <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+        <div class="welcome-header mb-0">
+          <h1 class="welcome-greeting">Halo, <span th:text="${session.loggedInUser != null ? session.loggedInUser.name : 'Collector'}">Collector</span>! 👋</h1>
+          <p class="welcome-subtitle">Lihat jadwal tugas penjemputan sampah dan kelola progres pekerjaan Anda.</p>
+          <div class="welcome-meta">
+            <span class="badge-role" th:text="${session.userRole}">Collector</span>
+            <span class="meta-item">
+              <i class="bi bi-geo-alt text-success"></i> 
+              <span th:text="${regionName}">Region</span>
+            </span>
+          </div>
+        </div>
+        <div>
+          <a th:href="@{/reports/collector/pdf}" class="btn btn-danger shadow-sm">
+            <i class="bi bi-file-earmark-pdf"></i> Export PDF Report
+          </a>
+        </div>
       </div>
 
       <div class="row">
         <div class="col-md-4">
           <div class="stat-card bg-info">
+            <div class="stat-icon"><i class="bi bi-calendar-event"></i></div>
             <h3 th:text="${scheduledCount}">0</h3>
             <p>Tugas Dijadwalkan</p>
           </div>
@@ -28,6 +42,7 @@
 
         <div class="col-md-4">
           <div class="stat-card bg-warning">
+            <div class="stat-icon"><i class="bi bi-clock-history"></i></div>
             <h3 th:text="${onProgressCount}">0</h3>
             <p>Sedang Dikerjakan</p>
           </div>
@@ -35,6 +50,7 @@
 
         <div class="col-md-4">
           <div class="stat-card bg-success">
+            <div class="stat-icon"><i class="bi bi-check-circle"></i></div>
             <h3 th:text="${completedCount}">0</h3>
             <p>Tugas Selesai</p>
           </div>
@@ -45,6 +61,7 @@
       <div class="row mt-3">
         <div class="col-md-4">
           <div class="stat-card bg-secondary">
+            <div class="stat-icon"><i class="bi bi-trash3"></i></div>
             <h3><span th:text="${totalWaste}">0.0</span> Kg</h3>
             <p>Total Sampah Diangkut</p>
           </div>
@@ -89,22 +106,30 @@
               datasets: [{
                 data: values,
                 backgroundColor: [
-                  'rgba(40, 167, 69, 0.7)',
-                  'rgba(0, 123, 255, 0.7)',
-                  'rgba(255, 193, 7, 0.7)',
-                  'rgba(220, 53, 69, 0.7)',
-                  'rgba(111, 66, 193, 0.7)'
-                ]
+                  '#15803D',
+                  '#0EA5E9',
+                  '#F59E0B',
+                  '#EF4444',
+                  '#8B5CF6'
+                ],
+                borderWidth: 2,
+                borderColor: 'var(--surface)'
               }]
             },
             options: {
               responsive: true,
               maintainAspectRatio: false,
+              cutout: '70%',
               plugins: {
                 legend: {
                   position: 'bottom',
                   labels: {
-                    boxWidth: 12
+                    boxWidth: 12,
+                    color: 'var(--text-secondary)',
+                    font: {
+                      family: "'Inter', sans-serif",
+                      weight: '600'
+                    }
                   }
                 }
               }
@@ -115,14 +140,14 @@
       </script>
 
       <div class="card mt-4">
-        <div class="card-header bg-primary text-white">
+        <div class="card-header bg-primary">
           <i class="bi bi-list-task"></i> Daftar Tugas Saya
         </div>
 
         <div class="card-body p-0">
           <div class="table-responsive">
             <table class="table table-hover mb-0 align-middle">
-              <thead class="table-light">
+              <thead>
                 <tr>
                   <th>ID</th>
                   <th>Warga / Lokasi</th>
@@ -155,13 +180,13 @@
                   <td th:text="${task.rt != null ? task.rt.name : '-'}"></td>
 
                   <td>
-                    <span class="badge" th:text="${task.status}"> </span>
+                    <span class="badge" th:classappend="${task.status != null} ? 'badge-' + ${#strings.toLowerCase(task.status).replace('_', '-')} : ''" th:text="${task.status}"></span>
                   </td>
 
                   <td>
                     <span th:if="${task.photoPath != null}">
                       <a target="_blank" th:href="@{'/uploads/' + ${task.photoPath}}">
-                        <img th:src="@{'/uploads/' + ${task.photoPath}}" style="width:80px; height:80px; object-fit:cover; border-radius:8px;">
+                        <img th:src="@{'/uploads/' + ${task.photoPath}}" class="photo-thumb" alt="Foto Sampah">
                       </a>
                     </span>
                     <span th:if="${task.photoPath == null}">-</span>
@@ -218,17 +243,17 @@
                     <div class="modal fade text-start" th:id="'detailModal' + ${task.id}" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
-                                <div class="modal-header bg-primary text-white">
+                                <div class="modal-header bg-primary">
                                     <h5 class="modal-title" th:text="'Detail Tugas #' + ${task.id}">Tugas #15</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
-                                <div class="modal-body text-dark">
+                                <div class="modal-body">
                                     <!-- Foto Sampah -->
                                     <div class="text-center mb-3">
                                         <div th:if="${task.photoPath != null}">
                                             <img th:src="@{'/uploads/' + ${task.photoPath}}" class="img-fluid rounded border" style="max-height: 250px; object-fit: contain;">
                                         </div>
-                                        <div th:if="${task.photoPath == null}" class="text-muted border p-4 rounded bg-light">
+                                        <div th:if="${task.photoPath == null}" class="text-muted border p-4 rounded text-center">
                                             <i class="bi bi-image" style="font-size: 2rem;"></i><br>
                                             Tidak ada foto
                                         </div>
@@ -276,7 +301,7 @@
                                     <div class="mb-3">
                                         <label class="form-label fw-bold">Status</label>
                                         <div>
-                                            <span class="badge bg-secondary" th:text="${task.status != null ? task.status : '-'}">Status</span>
+                                            <span class="badge" th:classappend="${task.status != null} ? 'badge-' + ${#strings.toLowerCase(task.status).replace('_', '-')} : ''" th:text="${task.status != null ? task.status : '-'}">Status</span>
                                         </div>
                                     </div>
                                 </div>

@@ -28,6 +28,30 @@ public class DashboardController {
 
         model.addAttribute("currentUser", user);
 
+        // Pre-resolve lazy-loaded region/RT names while Hibernate session is active
+        // to avoid LazyInitializationException in Thymeleaf templates
+        String regionName = "Semua Wilayah";
+        String rtName = "-";
+        try {
+            if (user.getRegion() != null && user.getRegion().getName() != null) {
+                regionName = user.getRegion().getName();
+            } else if (user.getRt() != null && user.getRt().getRegion() != null
+                       && user.getRt().getRegion().getName() != null) {
+                regionName = user.getRt().getRegion().getName();
+            }
+        } catch (Exception ignored) {
+            // fallback to default if proxy fails
+        }
+        try {
+            if (user.getRt() != null && user.getRt().getName() != null) {
+                rtName = user.getRt().getName();
+            }
+        } catch (Exception ignored) {
+            // fallback to default if proxy fails
+        }
+        model.addAttribute("regionName", regionName);
+        model.addAttribute("rtName", rtName);
+
         switch (user.getRole()) {
             case RESIDENT -> {
                 var myRequests = pickupRequestService.findByResident(user);

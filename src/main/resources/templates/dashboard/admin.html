@@ -8,28 +8,41 @@
 <body>
     <div layout:fragment="page-title">Monitoring Sistem (Admin)</div>
 
-    <div layout:fragment="content">
+    <div layout:fragment="content" class="slide-up">
+        <!-- Welcome Header -->
+        <div class="welcome-header mb-4">
+            <h1 class="welcome-greeting">Halo, <span th:text="${session.loggedInUser != null ? session.loggedInUser.name : 'Administrator'}">Administrator</span>! 👋</h1>
+            <p class="welcome-subtitle">Akses monitoring penuh sistem, kelola region, RT, kategori sampah, dan user.</p>
+            <div class="welcome-meta">
+                <span class="badge-role" th:text="${session.userRole}">ADMIN</span>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col-md-3">
-                <div class="card stat-card bg-primary">
+                <div class="stat-card bg-primary">
+                    <div class="stat-icon"><i class="bi bi-journal-text"></i></div>
                     <h3 th:text="${totalRequests}">0</h3>
                     <p>Total Request</p>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card stat-card bg-warning">
+                <div class="stat-card bg-warning">
+                    <div class="stat-icon"><i class="bi bi-clock-history"></i></div>
                     <h3 th:text="${pending_approvalCount}">0</h3>
                     <p>Pending Approval</p>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card stat-card bg-info">
+                <div class="stat-card bg-info">
+                    <div class="stat-icon"><i class="bi bi-calendar-event"></i></div>
                     <h3 th:text="${scheduledCount}">0</h3>
                     <p>Scheduled</p>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card stat-card bg-success">
+                <div class="stat-card bg-success">
+                    <div class="stat-icon"><i class="bi bi-check-circle"></i></div>
                     <h3 th:text="${completedCount}">0</h3>
                     <p>Completed</p>
                 </div>
@@ -40,7 +53,7 @@
             <div class="card-header">Semua Aktivitas Request</div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-striped">
+                    <table class="table table-hover">
                         <thead>
                             <tr>
                                 <th>ID</th>
