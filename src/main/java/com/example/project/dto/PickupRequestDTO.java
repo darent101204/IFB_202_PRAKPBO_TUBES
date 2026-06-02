@@ -2,6 +2,7 @@ package com.example.project.dto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -20,4 +21,6 @@ public class PickupRequestDTO {
     private LocalDate scheduledDate;
 
     private List<RequestItemDTO> items;
+
+    private MultipartFile photo;
 }

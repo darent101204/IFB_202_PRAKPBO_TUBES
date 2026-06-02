@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title>Tambah RT</title>
+</head>
+<body>
+
+<div layout:fragment="page-title">
+    Tambah RT
+</div>
+
+<div layout:fragment="content">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <i class="bi bi-building-add"></i> Form Tambah RT
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/admin/rts/create}"
+                          th:object="${rtDTO}"
+                          method="post">
+
+                        <!-- NAME -->
+                        <div class="mb-3">
+                            <label class="form-label" for="rt-name">Nama RT</label>
+                            <input id="rt-name" type="text"
+                                   class="form-control"
+                                   th:field="*{name}"
+                                   placeholder="Masukkan nama RT (contoh: RT 01)"
+                                   required>
+                        </div>
+
+                        <!-- REGION -->
+                        <div class="mb-3">
+                            <label class="form-label" for="rt-region">Wilayah (Region)</label>
+                            <select id="rt-region" class="form-select"
+                                    th:field="*{regionId}"
+                                    required>
+                                <option value="" disabled selected>-- Pilih Region --</option>
+                                <option th:each="r : ${regions}"
+                                        th:value="${r.id}"
+                                        th:text="${r.name}"></option>
+                            </select>
+                        </div>
+
+                        <!-- CONTACT PHONE -->
+                        <div class="mb-3">
+                            <label class="form-label" for="rt-phone">Nomor Telepon</label>
+                            <input id="rt-phone" type="text"
+                                   class="form-control"
+                                   th:field="*{contactPhone}"
+                                   placeholder="Masukkan nomor telepon kontak (opsional)">
+                        </div>
+
+                        <!-- ADDRESS -->
+                        <div class="mb-3">
+                            <label class="form-label" for="rt-address">Alamat</label>
+                            <textarea id="rt-address" class="form-control"
+                                      th:field="*{address}"
+                                      rows="3"
+                                      placeholder="Masukkan alamat lengkap (opsional)"></textarea>
+                        </div>
+
+                        <!-- BUTTONS -->
+                        <div class="d-flex justify-content-between">
+                            <a th:href="@{/admin/rts}"
+                               class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> Batal
+                            </a>
+                            <button type="submit"
+                                    class="btn btn-primary">
+                                <i class="bi bi-save"></i> Simpan
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

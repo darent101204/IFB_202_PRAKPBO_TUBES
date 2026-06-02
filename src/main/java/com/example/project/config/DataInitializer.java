@@ -25,6 +25,14 @@ public class DataInitializer implements CommandLineRunner {
             }
         });
 
+        // Migration safety patch for existing waste categories
+        wasteCategoryRepository.findAll().forEach(category -> {
+            if (category.getUnit() == null || category.getUnit().isBlank() || "kg".equals(category.getUnit())) {
+                category.setUnit("Kg");
+                wasteCategoryRepository.save(category);
+            }
+        });
+
         if (userRepository.count() > 0) return;
 
         // 1. Regions
@@ -50,20 +58,20 @@ public class DataInitializer implements CommandLineRunner {
         rtRepository.save(rt02);
 
         // 3. Waste Categories
-        WasteCategory plastic = new WasteCategory();
-        plastic.setName("Plastic");
-        plastic.setUnit("kg");
-        wasteCategoryRepository.save(plastic);
+        WasteCategory organik = new WasteCategory();
+        organik.setName("Organik");
+        organik.setUnit("Kg");
+        wasteCategoryRepository.save(organik);
 
-        WasteCategory paper = new WasteCategory();
-        paper.setName("Paper");
-        paper.setUnit("kg");
-        wasteCategoryRepository.save(paper);
+        WasteCategory anorganik = new WasteCategory();
+        anorganik.setName("Anorganik");
+        anorganik.setUnit("Kg");
+        wasteCategoryRepository.save(anorganik);
 
-        WasteCategory organic = new WasteCategory();
-        organic.setName("Organic");
-        organic.setUnit("kg");
-        wasteCategoryRepository.save(organic);
+        WasteCategory b3 = new WasteCategory();
+        b3.setName("B3");
+        b3.setUnit("Kg");
+        wasteCategoryRepository.save(b3);
 
         // 4. Users
         // Admin

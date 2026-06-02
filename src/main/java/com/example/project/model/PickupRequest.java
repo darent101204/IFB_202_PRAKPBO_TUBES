@@ -55,6 +55,9 @@ public class PickupRequest {
     @Column(columnDefinition = "TEXT")
     private String notes;
 
+    @Column(name = "photo_path")
+    private String photoPath;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

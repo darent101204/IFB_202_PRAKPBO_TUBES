@@ -1,5 +1,6 @@
 package com.example.project.controller;
 
+import com.example.project.model.PickupRequest;
 import com.example.project.model.RequestStatus;
 import com.example.project.model.Role;
 import com.example.project.model.User;
@@ -11,7 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.Arrays;
+import java.util.List;
 
 @Controller
 @RequestMapping("/dashboard")
@@ -40,6 +41,23 @@ public class DashboardController {
                         .filter(r -> r.getStatus() == RequestStatus.SCHEDULED).count());
                 model.addAttribute("completedCount", myRequests.stream()
                         .filter(r -> r.getStatus() == RequestStatus.COMPLETED).count());
+
+                // Total waste submitted (sum of all item quantities)
+                double totalWaste = calculateTotalWaste(myRequests);
+                model.addAttribute("totalWaste", String.format("%.1f", totalWaste));
+
+                // Waste Category Distribution for charts
+                var residentCategoryMap = myRequests.stream()
+                        .filter(r -> r.getItems() != null)
+                        .flatMap(r -> r.getItems().stream())
+                        .filter(item -> item.getCategory() != null && item.getQuantity() != null)
+                        .collect(java.util.stream.Collectors.groupingBy(
+                                item -> item.getCategory().getName(),
+                                java.util.stream.Collectors.summingDouble(item -> item.getQuantity())
+                        ));
+                model.addAttribute("residentCategoryLabels", new java.util.ArrayList<>(residentCategoryMap.keySet()));
+                model.addAttribute("residentCategoryValues", new java.util.ArrayList<>(residentCategoryMap.values()));
+
                 return "dashboard/resident";
             }
             case RT -> {
@@ -54,6 +72,20 @@ public class DashboardController {
                         .filter(r -> r.getStatus() == RequestStatus.SCHEDULED).count());
                 model.addAttribute("completedCount", rtRequests.stream()
                         .filter(r -> r.getStatus() == RequestStatus.COMPLETED).count());
+
+                // Total waste in RT area (sum of all item quantities)
+                double totalWaste = calculateTotalWaste(rtRequests);
+                model.addAttribute("totalWaste", String.format("%.1f", totalWaste));
+
+                // Request Status counts for charts
+                long pendingApproval = rtRequests.stream().filter(r -> r.getStatus() == RequestStatus.PENDING_APPROVAL).count();
+                long scheduled = rtRequests.stream().filter(r -> r.getStatus() == RequestStatus.SCHEDULED).count();
+                long completed = rtRequests.stream().filter(r -> r.getStatus() == RequestStatus.COMPLETED).count();
+                long rejected = rtRequests.stream().filter(r -> r.getStatus() == RequestStatus.REJECTED).count();
+
+                model.addAttribute("rtStatusLabels", java.util.List.of("Pending Approval", "Scheduled", "Completed", "Rejected"));
+                model.addAttribute("rtStatusValues", java.util.List.of(pendingApproval, scheduled, completed, rejected));
+
                 return "dashboard/rt";
             }
             case COLLECTOR -> {
@@ -68,6 +100,23 @@ public class DashboardController {
                         .filter(r -> r.getStatus() == RequestStatus.ON_PROGRESS).count());
                 model.addAttribute("completedCount", myTasks.stream()
                         .filter(r -> r.getStatus() == RequestStatus.COMPLETED).count());
+
+                // Total waste collected (sum of all assigned item quantities)
+                double totalWaste = calculateTotalWaste(myTasks);
+                model.addAttribute("totalWaste", String.format("%.1f", totalWaste));
+
+                // Waste Category Distribution for charts
+                var collectorCategoryMap = myTasks.stream()
+                        .filter(r -> r.getItems() != null)
+                        .flatMap(r -> r.getItems().stream())
+                        .filter(item -> item.getCategory() != null && item.getQuantity() != null)
+                        .collect(java.util.stream.Collectors.groupingBy(
+                                item -> item.getCategory().getName(),
+                                java.util.stream.Collectors.summingDouble(item -> item.getQuantity())
+                        ));
+                model.addAttribute("collectorCategoryLabels", new java.util.ArrayList<>(collectorCategoryMap.keySet()));
+                model.addAttribute("collectorCategoryValues", new java.util.ArrayList<>(collectorCategoryMap.values()));
+
                 return "dashboard/collector";
             }
             case ADMIN -> {
@@ -88,4 +137,18 @@ public class DashboardController {
             }
         }
     }
+
+    /**
+     * Calculate total waste quantity from a list of pickup requests.
+     * Sums up all request item quantities.
+     */
+    private double calculateTotalWaste(List<PickupRequest> requests) {
+        return requests.stream()
+                .filter(r -> r.getItems() != null)
+                .flatMap(r -> r.getItems().stream())
+                .filter(item -> item.getQuantity() != null)
+                .mapToDouble(item -> item.getQuantity())
+                .sum();
+    }
 }
+

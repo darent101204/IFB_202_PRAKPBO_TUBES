@@ -23,4 +23,5 @@ public interface PickupRequestService {
     PickupRequest makeCollective(Long masterId, List<Long> childIds, User rtUser);
     PickupRequest updateRequest(Long id, PickupRequestDTO dto, User user);
     void deleteById(Long id);
+    void deleteRequest(Long id, User user);
 }

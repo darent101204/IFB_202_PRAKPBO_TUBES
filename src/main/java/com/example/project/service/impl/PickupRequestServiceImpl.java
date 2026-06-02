@@ -23,8 +23,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -89,6 +94,30 @@ public class PickupRequestServiceImpl implements PickupRequestService {
             request.setIsCollective(false);
             request.setNotes(dto.getNotes());
             request.setScheduledDate(dto.getScheduledDate());
+
+            if (dto.getPhoto() != null && !dto.getPhoto().isEmpty()) {
+                try {
+                    String originalFilename = dto.getPhoto().getOriginalFilename();
+                    String extension = "";
+                    if (originalFilename != null && originalFilename.contains(".")) {
+                        extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+                    }
+                    String fileName = UUID.randomUUID().toString() + extension;
+                    
+                    Path uploadPath = Paths.get("uploads");
+                    if (!Files.exists(uploadPath)) {
+                        Files.createDirectories(uploadPath);
+                    }
+                    
+                    Path filePath = uploadPath.resolve(fileName);
+                    Files.copy(dto.getPhoto().getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+                    
+                    request.setPhotoPath(fileName);
+                } catch (Exception e) {
+                    log.error("Gagal mengupload foto: {}", e.getMessage());
+                    throw new BusinessException("Gagal menyimpan foto sampah: " + e.getMessage());
+                }
+            }
 
             PickupRequest saved = pickupRequestRepository.save(request);
             saveItems(dto, saved);
@@ -251,36 +280,112 @@ public class PickupRequestServiceImpl implements PickupRequestService {
     }
 
     @Override
-public PickupRequest updateRequest(Long id, PickupRequestDTO dto, User user) {
-
-    PickupRequest request = findById(id);
-
-    if (user == null) {
-        throw new BusinessException("User tidak valid");
-    }
-
-    // hanya resident pemilik request yang boleh edit
-    if (user.getRole() == Role.RESIDENT) {
-
-        if (request.getResident() == null ||
-            !request.getResident().getId().equals(user.getId())) {
-            throw new BusinessException("Anda tidak berhak mengubah request ini");
+    public void deleteRequest(Long id, User user) {
+        if (user == null || user.getRole() != Role.RESIDENT) {
+            throw new BusinessException("Hanya resident yang dapat menghapus request");
         }
 
-        if (request.getStatus() != RequestStatus.PENDING_APPROVAL) {
+        PickupRequest request = findById(id);
+
+        if (request.getResident() == null || !request.getResident().getId().equals(user.getId())) {
+            throw new BusinessException("Anda tidak berhak menghapus request ini");
+        }
+
+        if (request.getStatus() != RequestStatus.PENDING_APPROVAL
+                && request.getStatus() != RequestStatus.REJECTED) {
             throw new BusinessException(
-                    "Request yang sudah diproses tidak dapat diubah");
+                    "Hanya request dengan status PENDING_APPROVAL atau REJECTED yang dapat dihapus");
         }
+
+        log.info("Request {} dihapus oleh resident {}", id, user.getName());
+        requestItemRepository.deleteByPickupRequestId(id);
+        pickupRequestRepository.deleteById(id);
     }
 
-    if (dto.getScheduledDate() != null) {
-        request.setScheduledDate(dto.getScheduledDate());
+    @Override
+    public PickupRequest updateRequest(Long id, PickupRequestDTO dto, User user) {
+
+        PickupRequest request = findById(id);
+
+        if (user == null) {
+            throw new BusinessException("User tidak valid");
+        }
+
+        // hanya resident pemilik request yang boleh edit
+        if (user.getRole() == Role.RESIDENT) {
+
+            if (request.getResident() == null ||
+                !request.getResident().getId().equals(user.getId())) {
+                throw new BusinessException("Anda tidak berhak mengubah request ini");
+            }
+
+            if (request.getStatus() != RequestStatus.PENDING_APPROVAL) {
+                throw new BusinessException(
+                        "Request yang sudah diproses tidak dapat diubah");
+            }
+        }
+
+        // Safeguard 1: Validate items exists
+        if (request.getItems() == null || request.getItems().isEmpty()) {
+            throw new BusinessException("Data item request tidak ditemukan");
+        }
+
+        if (dto.getScheduledDate() != null) {
+            request.setScheduledDate(dto.getScheduledDate());
+        }
+
+        request.setNotes(dto.getNotes());
+
+        // Update RequestItem
+        if (dto.getItems() != null && !dto.getItems().isEmpty()) {
+            RequestItemDTO itemDTO = dto.getItems().get(0);
+            if (itemDTO.getCategoryId() != null && itemDTO.getQuantity() != null) {
+                if (itemDTO.getQuantity() <= 0) {
+                    throw new BusinessException("Item request harus memiliki jumlah lebih dari 0");
+                }
+                
+                WasteCategory category = wasteCategoryRepository.findById(itemDTO.getCategoryId())
+                        .orElseThrow(() -> new ResourceNotFoundException("Kategori Limbah", itemDTO.getCategoryId()));
+                
+                RequestItem item = request.getItems().get(0);
+                item.setCategory(category);
+                item.setQuantity(itemDTO.getQuantity());
+                item.setNotes(dto.getNotes()); // Sync notes to item if needed
+                requestItemRepository.save(item);
+            } else {
+                throw new BusinessException("Kategori dan jumlah item harus diisi");
+            }
+        } else {
+            throw new BusinessException("Kategori dan jumlah item harus diisi");
+        }
+
+        // Photo Replacement
+        if (dto.getPhoto() != null && !dto.getPhoto().isEmpty()) {
+            try {
+                String originalFilename = dto.getPhoto().getOriginalFilename();
+                String extension = "";
+                if (originalFilename != null && originalFilename.contains(".")) {
+                    extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+                }
+                String fileName = UUID.randomUUID().toString() + extension;
+                
+                Path uploadPath = Paths.get("uploads");
+                if (!Files.exists(uploadPath)) {
+                    Files.createDirectories(uploadPath);
+                }
+                
+                Path filePath = uploadPath.resolve(fileName);
+                Files.copy(dto.getPhoto().getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+                
+                request.setPhotoPath(fileName);
+            } catch (Exception e) {
+                log.error("Gagal mengupload foto baru: {}", e.getMessage());
+                throw new BusinessException("Gagal menyimpan foto sampah: " + e.getMessage());
+            }
+        }
+
+        return pickupRequestRepository.save(request);
     }
-
-    request.setNotes(dto.getNotes());
-
-    return pickupRequestRepository.save(request);
-}
 
     private void validateResidentRequest(PickupRequestDTO dto, User resident) {
         if (resident == null || resident.getRole() != Role.RESIDENT) {

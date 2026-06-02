@@ -1,85 +1,304 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" 
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/main}">
-<head>
+<!doctype html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layout/main}"
+>
+  <head>
     <title>Collector Dashboard</title>
-</head>
-<body>
+  </head>
+  <body>
     <div layout:fragment="page-title">Dashboard Collector</div>
 
     <div layout:fragment="content">
-        <div class="row">
-            <div class="col-md-4">
-                <div class="stat-card bg-info">
-                    <h3 th:text="${scheduledCount}">0</h3>
-                    <p>Tugas Dijadwalkan</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="stat-card bg-warning">
-                    <h3 th:text="${onProgressCount}">0</h3>
-                    <p>Sedang Dikerjakan</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="stat-card bg-success">
-                    <h3 th:text="${completedCount}">0</h3>
-                    <p>Tugas Selesai</p>
-                </div>
-            </div>
+      <!-- Actions -->
+      <div class="d-flex justify-content-end mb-3">
+        <a th:href="@{/reports/collector/pdf}" class="btn btn-outline-danger shadow-sm">
+          <i class="bi bi-file-earmark-pdf"></i> Export PDF Report
+        </a>
+      </div>
+
+      <div class="row">
+        <div class="col-md-4">
+          <div class="stat-card bg-info">
+            <h3 th:text="${scheduledCount}">0</h3>
+            <p>Tugas Dijadwalkan</p>
+          </div>
         </div>
 
-        <div class="card mt-4">
-            <div class="card-header bg-primary text-white">
-                <i class="bi bi-list-task"></i> Daftar Tugas Saya
-            </div>
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0 align-middle">
-                        <thead class="table-light">
-                            <tr>
-                                <th>ID</th>
-                                <th>Warga / Lokasi</th>
-                                <th>RT</th>
-                                <th>Status</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:each="task : ${myTasks}" th:if="${myTasks != null}">
-                                <td th:text="'#' + ${task.id}"></td>
-                                <td>
-                                    <div class="fw-bold" th:text="${task.resident?.name ?: '-'}">Resident</div>
-                                    <small class="text-muted" th:text="${task.region?.name ?: '-'}"></small>
-                                </td>
-                                <td th:text="${task.rt?.name ?: '-'}"></td>
-                                <td>
-                                    <span class="badge" th:classappend="${task.status != null} ? 'badge-' + ${#strings.toLowerCase(task.status).replace('_', '-')} : ''"
-                                          th:text="${task.status}"></span>
-                                </td>
-                                <td>
-                                    <form th:if="${task.status == T(com.example.project.model.RequestStatus).SCHEDULED}"
-                                          th:action="@{/requests/{id}/start(id=${task.id})}" method="post">
-                                        <button type="submit" class="btn btn-sm btn-warning text-white">Mulai</button>
-                                    </form>
-                                    <form th:if="${task.status == T(com.example.project.model.RequestStatus).ON_PROGRESS}"
-                                          th:action="@{/requests/{id}/complete(id=${task.id})}" method="post">
-                                        <button type="submit" class="btn btn-sm btn-success">Selesai</button>
-                                    </form>
-                                    <span th:if="${task.status == T(com.example.project.model.RequestStatus).COMPLETED}" class="text-success">
-                                        <i class="bi bi-check-circle-fill"></i> Selesai
-                                    </span>
-                                </td>
-                            </tr>
-                            <tr th:if="${myTasks == null or #lists.isEmpty(myTasks)}">
-                                <td colspan="5" class="text-center text-muted p-4">Belum ada tugas yang di-assign.</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+        <div class="col-md-4">
+          <div class="stat-card bg-warning">
+            <h3 th:text="${onProgressCount}">0</h3>
+            <p>Sedang Dikerjakan</p>
+          </div>
         </div>
+
+        <div class="col-md-4">
+          <div class="stat-card bg-success">
+            <h3 th:text="${completedCount}">0</h3>
+            <p>Tugas Selesai</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Total Waste Stats -->
+      <div class="row mt-3">
+        <div class="col-md-4">
+          <div class="stat-card bg-secondary">
+            <h3><span th:text="${totalWaste}">0.0</span> Kg</h3>
+            <p>Total Sampah Diangkut</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Analytics Section -->
+      <div class="row mt-3">
+        <div class="col-lg-6 col-12">
+          <div class="card shadow-sm border-0">
+            <div class="card-body">
+              <h5 class="card-title fw-bold mb-3"><i class="bi bi-pie-chart-fill text-info"></i> Komposisi Sampah Diangkut</h5>
+              <div style="min-height: 250px; display: flex; justify-content: center; align-items: center; position: relative;">
+                <canvas id="collectorChart" style="max-height: 240px; max-width: 240px;"></canvas>
+                <div id="collectorChartEmpty" class="text-muted d-none" style="position: absolute; text-align: center;">
+                  <i class="bi bi-info-circle" style="font-size: 2rem;"></i>
+                  <p class="mt-2 mb-0">Belum ada request sampah</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      <script th:inline="javascript">
+        /*<![CDATA[*/
+        document.addEventListener("DOMContentLoaded", function() {
+          const labels = /*[[${collectorCategoryLabels}]]*/ [];
+          const values = /*[[${collectorCategoryValues}]]*/ [];
+
+          if (!labels || labels.length === 0 || values.every(v => v === 0)) {
+            document.getElementById('collectorChart').classList.add('d-none');
+            document.getElementById('collectorChartEmpty').classList.remove('d-none');
+            return;
+          }
+
+          new Chart(document.getElementById('collectorChart'), {
+            type: 'doughnut',
+            data: {
+              labels: labels,
+              datasets: [{
+                data: values,
+                backgroundColor: [
+                  'rgba(40, 167, 69, 0.7)',
+                  'rgba(0, 123, 255, 0.7)',
+                  'rgba(255, 193, 7, 0.7)',
+                  'rgba(220, 53, 69, 0.7)',
+                  'rgba(111, 66, 193, 0.7)'
+                ]
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: {
+                  position: 'bottom',
+                  labels: {
+                    boxWidth: 12
+                  }
+                }
+              }
+            }
+          });
+        });
+        /*]]>*/
+      </script>
+
+      <div class="card mt-4">
+        <div class="card-header bg-primary text-white">
+          <i class="bi bi-list-task"></i> Daftar Tugas Saya
+        </div>
+
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover mb-0 align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>ID</th>
+                  <th>Warga / Lokasi</th>
+                  <th>RT</th>
+                  <th>Status</th>
+                  <th>Foto</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr th:each="task : ${myTasks}">
+                  <td th:text="${'#' + task.id}"></td>
+
+                  <td>
+                    <div
+                      class="fw-bold"
+                      th:text="${task.resident != null ? task.resident.name : '-'}"
+                    >
+                      Resident
+                    </div>
+
+                    <small
+                      class="text-muted"
+                      th:text="${task.region != null ? task.region.name : '-'}"
+                    >
+                    </small>
+                  </td>
+
+                  <td th:text="${task.rt != null ? task.rt.name : '-'}"></td>
+
+                  <td>
+                    <span class="badge" th:text="${task.status}"> </span>
+                  </td>
+
+                  <td>
+                    <span th:if="${task.photoPath != null}">
+                      <a target="_blank" th:href="@{'/uploads/' + ${task.photoPath}}">
+                        <img th:src="@{'/uploads/' + ${task.photoPath}}" style="width:80px; height:80px; object-fit:cover; border-radius:8px;">
+                      </a>
+                    </span>
+                    <span th:if="${task.photoPath == null}">-</span>
+                  </td>
+
+                  <td>
+                    <div class="d-flex gap-2 align-items-center">
+                      <!-- DETAIL -->
+                      <button type="button" 
+                              class="btn btn-sm btn-outline-info" 
+                              data-bs-toggle="modal" 
+                              th:data-bs-target="'#detailModal' + ${task.id}">
+                        <i class="bi bi-eye"></i> Detail
+                      </button>
+
+                      <!-- START TASK -->
+                      <form
+                        th:if="${task.status != null and task.status.name() == 'SCHEDULED'}"
+                        th:action="@{/requests/{id}/start(id=${task.id})}"
+                        method="post"
+                        class="mb-0"
+                      >
+                        <button
+                          type="submit"
+                          class="btn btn-sm btn-warning text-white"
+                        >
+                          Mulai
+                        </button>
+                      </form>
+
+                      <!-- COMPLETE TASK -->
+                      <form
+                        th:if="${task.status != null and task.status.name() == 'ON_PROGRESS'}"
+                        th:action="@{/requests/{id}/complete(id=${task.id})}"
+                        method="post"
+                        class="mb-0"
+                      >
+                        <button type="submit" class="btn btn-sm btn-success">
+                          Selesai
+                        </button>
+                      </form>
+
+                      <!-- DONE -->
+                      <span
+                        th:if="${task.status != null and task.status.name() == 'COMPLETED'}"
+                        class="text-success"
+                      >
+                        <i class="bi bi-check-circle-fill"></i>
+                        Selesai
+                      </span>
+                    </div>
+
+                    <!-- Modal Detail Collector -->
+                    <div class="modal fade text-start" th:id="'detailModal' + ${task.id}" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header bg-primary text-white">
+                                    <h5 class="modal-title" th:text="'Detail Tugas #' + ${task.id}">Tugas #15</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body text-dark">
+                                    <!-- Foto Sampah -->
+                                    <div class="text-center mb-3">
+                                        <div th:if="${task.photoPath != null}">
+                                            <img th:src="@{'/uploads/' + ${task.photoPath}}" class="img-fluid rounded border" style="max-height: 250px; object-fit: contain;">
+                                        </div>
+                                        <div th:if="${task.photoPath == null}" class="text-muted border p-4 rounded bg-light">
+                                            <i class="bi bi-image" style="font-size: 2rem;"></i><br>
+                                            Tidak ada foto
+                                        </div>
+                                    </div>
+
+                                    <!-- Nama Warga -->
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Nama Warga</label>
+                                        <p class="ps-2" th:text="${task.resident != null ? task.resident.name : '-'}">Nama Warga</p>
+                                    </div>
+
+                                    <!-- Nama RT -->
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">RT</label>
+                                        <p class="ps-2" th:text="${task.rt != null ? task.rt.name : '-'}">RT</p>
+                                    </div>
+
+                                    <!-- Kategori & Jumlah -->
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Kategori & Jumlah</label>
+                                        <ul class="list-unstyled ps-2">
+                                            <li th:each="item : ${task.items}" th:if="${task.items != null}">
+                                                <i class="bi bi-recycle"></i> 
+                                                <span th:text="${item.category != null ? item.category.name : '-'}">Kategori</span> : 
+                                                <span th:text="${item.quantity != null ? item.quantity : '0'}">0</span> 
+                                                <span th:text="${item.category != null and item.category.unit != null ? item.category.unit : '-'}">Kg</span>
+                                            </li>
+                                            <li th:if="${task.items == null or #lists.isEmpty(task.items)}">-</li>
+                                        </ul>
+                                    </div>
+
+                                    <!-- Catatan -->
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Catatan</label>
+                                        <p class="ps-2" th:text="${task.notes != null and !task.notes.trim().isEmpty() ? task.notes : 'Tidak ada catatan'}">Catatan</p>
+                                    </div>
+
+                                    <!-- Rencana Tanggal Pickup -->
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Rencana Tanggal Penjemputan (Pickup)</label>
+                                        <p class="ps-2" th:text="${task.scheduledDate != null ? #temporals.format(task.scheduledDate, 'dd MMMM yyyy') : '-'}">2 Juni 2026</p>
+                                    </div>
+
+                                    <!-- Status -->
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Status</label>
+                                        <div>
+                                            <span class="badge bg-secondary" th:text="${task.status != null ? task.status : '-'}">Status</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                  </td>
+                </tr>
+
+                <tr th:if="${myTasks == null or #lists.isEmpty(myTasks)}">
+                  <td colspan="6" class="text-center text-muted p-4">
+                    Belum ada tugas yang di-assign.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
-</body>
+  </body>
 </html>

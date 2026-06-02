@@ -37,6 +37,79 @@
             </div>
         </div>
 
+        <!-- Total Waste Stats -->
+        <div class="row mt-3">
+            <div class="col-md-4">
+                <div class="stat-card bg-secondary">
+                    <h3><span th:text="${totalWaste}">0.0</span> Kg</h3>
+                    <p>Total Sampah Terkumpul</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Section -->
+        <div class="row mt-3">
+            <div class="col-lg-6 col-12">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold mb-3"><i class="bi bi-pie-chart-fill text-success"></i> Komposisi Sampah Saya</h5>
+                        <div style="min-height: 250px; display: flex; justify-content: center; align-items: center; position: relative;">
+                            <canvas id="residentChart" style="max-height: 240px; max-width: 240px;"></canvas>
+                            <div id="residentChartEmpty" class="text-muted d-none" style="position: absolute; text-align: center;">
+                                <i class="bi bi-info-circle" style="font-size: 2rem;"></i>
+                                <p class="mt-2 mb-0">Belum ada request sampah</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script th:inline="javascript">
+            /*<![CDATA[*/
+            document.addEventListener("DOMContentLoaded", function() {
+                const labels = /*[[${residentCategoryLabels}]]*/ [];
+                const values = /*[[${residentCategoryValues}]]*/ [];
+
+                if (!labels || labels.length === 0 || values.every(v => v === 0)) {
+                    document.getElementById('residentChart').classList.add('d-none');
+                    document.getElementById('residentChartEmpty').classList.remove('d-none');
+                    return;
+                }
+
+                new Chart(document.getElementById('residentChart'), {
+                    type: 'pie',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: values,
+                            backgroundColor: [
+                                'rgba(40, 167, 69, 0.7)',
+                                'rgba(0, 123, 255, 0.7)',
+                                'rgba(255, 193, 7, 0.7)',
+                                'rgba(220, 53, 69, 0.7)',
+                                'rgba(111, 66, 193, 0.7)'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    boxWidth: 12
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+            /*]]>*/
+        </script>
+
         <!-- Request History -->
         <div class="card mt-4">
             <div class="card-header d-flex justify-content-between align-items-center">
@@ -55,6 +128,7 @@
                                 <th>RT</th>
                                 <th>Status</th>
                                 <th>Collector</th>
+                                <th>Foto</th>
                                 <th>Catatan</th>
                                 <th>Aksi</th>
                             </tr>
@@ -69,29 +143,115 @@
                                           th:text="${req.status}">STATUS</span>
                                 </td>
                                 <td th:text="${req.assignedCollector?.name ?: '-'}">Collector</td>
+                                <td>
+                                    <span th:if="${req.photoPath != null}">
+                                        <a target="_blank" th:href="@{'/uploads/' + ${req.photoPath}}">
+                                            <img th:src="@{'/uploads/' + ${req.photoPath}}" style="width:80px; height:80px; object-fit:cover; border-radius:8px;">
+                                        </a>
+                                    </span>
+                                    <span th:if="${req.photoPath == null}">-</span>
+                                </td>
                                 <td th:text="${req.notes}">Notes</td>
                                 <td>
+                                    <!-- DETAIL -->
+                                    <button type="button" 
+                                            class="btn btn-sm btn-outline-info me-1" 
+                                            data-bs-toggle="modal" 
+                                            th:data-bs-target="'#detailModal' + ${req.id}">
+                                        <i class="bi bi-eye"></i> Detail
+                                    </button>
+
                                     <!-- EDIT -->
-                                    <a th:href="@{/requests/{id}/edit(id=${req.id})}"
-                                       class="btn btn-sm btn-outline-primary">
+                                    <a th:if="${req.status != null and req.status.name() == 'PENDING_APPROVAL'}"
+                                       th:href="@{/requests/{id}/edit(id=${req.id})}"
+                                       class="btn btn-sm btn-outline-primary me-1">
                                         <i class="bi bi-pencil"></i>
                                     </a>
                                 
-                                    <!-- DELETE -->
-                                    <form th:action="@{/requests/{id}/delete(id=${req.id})}"
+                                    <!-- DELETE: only allowed for PENDING_APPROVAL or REJECTED -->
+                                    <form th:if="${req.status != null and (req.status.name() == 'PENDING_APPROVAL' or req.status.name() == 'REJECTED')}"
+                                          th:action="@{/requests/{id}/delete(id=${req.id})}"
                                           method="post"
                                           style="display:inline"
-                                          onsubmit="return confirm('Hapus request ini?')">
+                                          onsubmit="return confirm('Hapus request ini? Tindakan ini tidak dapat dibatalkan.')">
                                 
                                         <button type="submit"
                                                 class="btn btn-sm btn-outline-danger">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </form>
+
+                                    <!-- Modal Detail Resident -->
+                                    <div class="modal fade text-start" th:id="'detailModal' + ${req.id}" tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" th:text="'Detail Request #' + ${req.id}">Request #15</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body text-dark">
+                                                    <!-- Foto Sampah -->
+                                                    <div class="text-center mb-3">
+                                                        <div th:if="${req.photoPath != null}">
+                                                            <img th:src="@{'/uploads/' + ${req.photoPath}}" class="img-fluid rounded border" style="max-height: 250px; object-fit: contain;">
+                                                        </div>
+                                                        <div th:if="${req.photoPath == null}" class="text-muted border p-4 rounded bg-light">
+                                                            <i class="bi bi-image" style="font-size: 2rem;"></i><br>
+                                                            Tidak ada foto
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Kategori & Jumlah -->
+                                                    <div class="mb-3">
+                                                        <label class="form-label fw-bold">Kategori & Jumlah</label>
+                                                        <ul class="list-unstyled ps-2">
+                                                            <li th:each="item : ${req.items}" th:if="${req.items != null}">
+                                                                <i class="bi bi-recycle"></i> 
+                                                                <span th:text="${item.category != null ? item.category.name : '-'}">Kategori</span> : 
+                                                                <span th:text="${item.quantity != null ? item.quantity : '0'}">0</span> 
+                                                                <span th:text="${item.category != null and item.category.unit != null ? item.category.unit : '-'}">Kg</span>
+                                                            </li>
+                                                            <li th:if="${req.items == null or #lists.isEmpty(req.items)}">-</li>
+                                                        </ul>
+                                                    </div>
+
+                                                    <!-- Catatan -->
+                                                    <div class="mb-3">
+                                                        <label class="form-label fw-bold">Catatan</label>
+                                                        <p class="ps-2" th:text="${req.notes != null and !req.notes.trim().isEmpty() ? req.notes : 'Tidak ada catatan'}">Catatan</p>
+                                                    </div>
+
+                                                    <!-- Tanggal Request -->
+                                                    <div class="mb-3">
+                                                        <label class="form-label fw-bold">Tanggal Request</label>
+                                                        <p class="ps-2" th:text="${req.createdAt != null ? #temporals.format(req.createdAt, 'dd MMMM yyyy HH:mm') : '-'}">31 Mei 2026</p>
+                                                    </div>
+
+                                                    <!-- Tanggal Pickup -->
+                                                    <div class="mb-3">
+                                                        <label class="form-label fw-bold">Rencana Tanggal Penjemputan (Pickup)</label>
+                                                        <p class="ps-2" th:text="${req.scheduledDate != null ? #temporals.format(req.scheduledDate, 'dd MMMM yyyy') : '-'}">2 Juni 2026</p>
+                                                    </div>
+
+                                                    <!-- Status -->
+                                                    <div class="mb-3">
+                                                        <label class="form-label fw-bold">Status</label>
+                                                        <div>
+                                                            <span class="badge" th:classappend="${req.status != null} ? 'badge-' + ${#strings.toLowerCase(req.status).replace('_', '-')} : ''"
+                                                                  th:text="${req.status != null ? req.status : '-'}">Pending Approval</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
                             <tr th:if="${myRequests == null or #lists.isEmpty(myRequests)}">
-                                <td colspan="6" class="text-center text-muted">Belum ada riwayat request.</td>
+                                <td colspan="8" class="text-center text-muted">Belum ada riwayat request.</td>
                             </tr>
                         </tbody>
                     </table>

@@ -13,7 +13,7 @@
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-body">
-                        <form th:action="@{/requests/create}" th:object="${requestDTO}" method="post">
+                        <form th:action="@{/requests/create}" th:object="${requestDTO}" method="post" enctype="multipart/form-data">
                             <div class="mb-3">
                                 <label class="form-label">RT Tujuan</label>
                                 <select class="form-select" th:field="*{rtId}" required>
@@ -25,10 +25,43 @@
                                 </select>
                             </div>
 
+                            <div class="card mb-3">
+                                <div class="card-header bg-light">
+                                    <strong><i class="bi bi-recycle"></i> Kategori Limbah</strong>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label">Kategori Sampah <span class="text-danger">*</span></label>
+                                            <select class="form-select" th:field="*{items[0].categoryId}" required>
+                                                <option value="">-- Pilih Kategori --</option>
+                                                <option th:each="cat : ${categories}"
+                                                        th:value="${cat.id}"
+                                                        th:text="${cat.name + (cat.unit != null ? ' (' + cat.unit + ')' : '')}">
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Jumlah <span class="text-danger">*</span></label>
+                                            <input type="number" class="form-control"
+                                                   th:field="*{items[0].quantity}"
+                                                   min="0.1" step="any"
+                                                   placeholder="Contoh: 2.5"
+                                                   required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="mb-3">
-                                <label class="form-label">Catatan / Keterangan Limbah</label>
-                                <textarea class="form-control" th:field="*{notes}" rows="4" 
-                                          placeholder="Contoh: Plastik 2 kantong, Botol kaca 5 buah..."></textarea>
+                                <label class="form-label">Catatan / Keterangan Limbah (Opsional)</label>
+                                <textarea class="form-control" th:field="*{notes}" rows="3" 
+                                          placeholder="Keterangan tambahan jika ada..."></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Foto Sampah (Opsional)</label>
+                                <input type="file" class="form-control" th:field="*{photo}" accept="image/*">
                             </div>
 
                             <div class="mb-3">
