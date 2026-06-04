@@ -1,87 +1,138 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" 
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/main}">
-<head>
+<!doctype html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layout/main}"
+>
+  <head>
     <title>Buat Request Penjemputan</title>
-</head>
-<body>
+  </head>
+  <body>
     <div layout:fragment="page-title">Buat Request Penjemputan Baru</div>
 
     <div layout:fragment="content" class="slide-up">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-body">
-                        <form th:action="@{/requests/create}" th:object="${requestDTO}" method="post" enctype="multipart/form-data">
-                            <div class="mb-3">
-                                <label class="form-label">RT Tujuan</label>
-                                <select class="form-select" th:field="*{rtId}" required>
-                                    <option value="" disabled selected>Pilih RT...</option>
-                                    <!-- Simplified: showing user's RT if exists -->
-                                    <option th:if="${session.loggedInUser != null and session.loggedInUser.rt != null}" 
-                                            th:value="${session.loggedInUser.rt.id}" 
-                                            th:text="${session.loggedInUser.rt.name}" selected></option>
-                                </select>
-                            </div>
-
-                            <div class="card mb-3">
-                                <div class="card-header">
-                                    <strong><i class="bi bi-recycle"></i> Kategori Limbah</strong>
-                                </div>
-                                <div class="card-body">
-                                    <div class="row g-3">
-                                        <div class="col-md-6">
-                                            <label class="form-label">Kategori Sampah <span class="text-danger">*</span></label>
-                                            <select class="form-select" th:field="*{items[0].categoryId}" required>
-                                                <option value="">-- Pilih Kategori --</option>
-                                                <option th:each="cat : ${categories}"
-                                                        th:value="${cat.id}"
-                                                        th:text="${cat.name + (cat.unit != null ? ' (' + cat.unit + ')' : '')}">
-                                                </option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label">Jumlah <span class="text-danger">*</span></label>
-                                            <input type="number" class="form-control"
-                                                   th:field="*{items[0].quantity}"
-                                                   min="0.1" step="any"
-                                                   placeholder="Contoh: 2.5"
-                                                   required>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">Catatan / Keterangan Limbah (Opsional)</label>
-                                <textarea class="form-control" th:field="*{notes}" rows="3" 
-                                          placeholder="Keterangan tambahan jika ada..."></textarea>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">Foto Sampah (Opsional)</label>
-                                <input type="file" class="form-control" th:field="*{photo}" accept="image/*">
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">Rencana Tanggal Penjemputan (Opsional)</label>
-                                <input type="date" class="form-control" th:field="*{scheduledDate}">
-                            </div>
-
-                            <div class="alert alert-info">
-                                <i class="bi bi-info-circle"></i> Request Anda akan dikirim ke RT untuk disetujui terlebih dahulu.
-                            </div>
-
-                            <div class="d-flex justify-content-between">
-                                <a th:href="@{/dashboard}" class="btn btn-secondary">Batal</a>
-                                <button type="submit" class="btn btn-primary">Kirim Request</button>
-                            </div>
-                        </form>
-                    </div>
+      <div class="row justify-content-center">
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-body">
+              <form
+                th:action="@{/requests/create}"
+                th:object="${requestDTO}"
+                method="post"
+                enctype="multipart/form-data"
+              >
+                <div class="mb-3">
+                  <label class="form-label">RT Tujuan</label>
+                  <select class="form-select" th:field="*{rtId}" required>
+                    <option value="" disabled selected>Pilih RT...</option>
+                    <!-- Simplified: showing user's RT if exists -->
+                    <option
+                      th:if="${session.loggedInUser != null and session.loggedInUser.rt != null}"
+                      th:value="${session.loggedInUser.rt.id}"
+                      th:text="${session.loggedInUser.rt.name}"
+                      selected
+                    ></option>
+                  </select>
                 </div>
+
+                <div class="card mb-3">
+                  <div class="card-header">
+                    <strong
+                      ><i class="bi bi-recycle"></i> Kategori Limbah</strong
+                    >
+                  </div>
+                  <div class="card-body">
+                    <div class="row g-3">
+                      <div class="col-md-6">
+                        <label class="form-label"
+                          >Kategori Sampah
+                          <span class="text-danger">*</span></label
+                        >
+                        <select
+                          class="form-select"
+                          th:field="*{items[0].categoryId}"
+                          required
+                        >
+                          <option value="">-- Pilih Kategori --</option>
+                          <option
+                            th:each="cat : ${categories}"
+                            th:value="${cat.id}"
+                            th:text="${cat.name + (cat.unit != null ? ' (' + cat.unit + ')' : '')}"
+                          ></option>
+                        </select>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label"
+                          >Jumlah <span class="text-danger">*</span></label
+                        >
+                        <input
+                          type="number"
+                          class="form-control"
+                          th:field="*{items[0].quantity}"
+                          min="0.1"
+                          step="any"
+                          placeholder="Contoh: 2.5"
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label"
+                    >Catatan / Keterangan Limbah (Opsional)</label
+                  >
+                  <textarea
+                    class="form-control"
+                    th:field="*{notes}"
+                    rows="3"
+                    placeholder="Keterangan tambahan jika ada..."
+                  ></textarea>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">
+                    Foto Sampah <span class="text-danger">*</span>
+                  </label>
+                  <input
+                    type="file"
+                    class="form-control"
+                    th:field="*{photo}"
+                    accept="image/*"
+                    required
+                  />
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">
+                    Rencana Tanggal Penjemputan
+                    <span class="text-danger">*</span>
+                  </label>
+                  <input
+                    type="date"
+                    class="form-control"
+                    th:field="*{scheduledDate}"
+                    required
+                  />
+                </div>
+
+                <div class="alert alert-info">
+                  <i class="bi bi-info-circle"></i> Request Anda akan dikirim ke
+                  RT untuk disetujui terlebih dahulu.
+                </div>
+
+                <div class="d-flex justify-content-between">
+                  <a th:href="@{/dashboard}" class="btn btn-secondary">Batal</a>
+                  <button type="submit" class="btn btn-primary">
+                    Kirim Request
+                  </button>
+                </div>
+              </form>
             </div>
+          </div>
         </div>
+      </div>
     </div>
-</body>
+  </body>
 </html>
